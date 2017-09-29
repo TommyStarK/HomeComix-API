@@ -1,0 +1,14 @@
+{
+  "name": "HomeComix-API",
+  "version": "1.0.0",
+  "description": "A secure RESTful API built to power the HomeComix iOS app",
+  "main": "server.js",
+  "repository": "https://github.com/TommyStarK/HomeComix-API",
+  "author": "Tommy <thomas.milox@epitech.eu>",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "jwt-simple": "^0.5.1",
+    "morgan": "^1.9.0"
+  }
+}
