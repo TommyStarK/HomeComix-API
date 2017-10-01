@@ -9,9 +9,10 @@ var port = process.env.PORT || 3000;
 // Parses incoming request bodies in a middleware
 app.use(bodyParser.json());
 
-//
-app.all('/homecomix/testmiddlewares/*', [require('./middlewares/token'), require('./middlewares/log')]);
-
+// Middlewares
+// Ensures that all requests starting with /testmiddlewares/* will be checked
+// for the token and requests will be logged in the console
+app.all('/homecomix/testmiddlewares/*', [require('./middlewares/token')]);
 
 // Mounts the router as middleware at path "/"
 app.use('/', router);

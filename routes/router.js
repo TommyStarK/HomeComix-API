@@ -15,10 +15,11 @@ router.get('/homecomix', function(request, response) {
 	});
 });
 
-router.get('/homecomix/test', function(request, response){
-	response.status(200).json({
+// Testing purpose only
+router.get('/homecomix/testmiddlewares/token', function(request, response) {
+	return response.status(200).json({
 		status: 200,
-		message: "Test"
+		message: "Test middleware :)"
 	});
 });
 

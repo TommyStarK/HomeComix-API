@@ -1,10 +1,10 @@
 var error = {
-
-	// Handling error ressource not found
+	// Handler for the HTTP 404 Not Found error
 	notFound: function(request, response, next) {
 
 		response.status(404).json({
-			what: "Not Found"
+			status: 404,
+			message: "Not Found"
 		});
 
   		next();

@@ -9,6 +9,7 @@ module.exports = function(request, response, next) {
 		try {
 
 			// decode token
+			console.log('decoding token');
 			next();
 
 		} catch(error) {
