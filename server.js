@@ -6,12 +6,14 @@ const app = express();
 // Port setting
 var port = process.env.PORT || 3000;
 
+// Allows nested object
+app.use(bodyParser.urlencoded({ extended: true }));
 // Parses incoming request bodies in a middleware
 app.use(bodyParser.json());
 
 // Middlewares
 // Ensures that all requests starting with /testmiddlewares/* will be checked
-// for the token and requests will be logged in the console
+// for the token
 app.all('/homecomix/testmiddlewares/*', [require('./middlewares/token')]);
 
 // Mounts the router as middleware at path "/"

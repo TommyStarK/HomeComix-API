@@ -9,12 +9,13 @@ module.exports = function(request, response, next) {
 		try {
 
 			// decode token
-			console.log('decoding token');
+			console.log('[%s] decoding token', request.url);
 			next();
 
 		} catch(error) {
 			return response.status(500).json({
 				status: 500,
+				success: true,
 				message: "Internal server error",
 				error: error
 			});
@@ -23,6 +24,7 @@ module.exports = function(request, response, next) {
 	} else {
 		return response.status(401).json({
 			status: 401,
+			success: false,
 			message: "No token provided"
 		});
 	}
