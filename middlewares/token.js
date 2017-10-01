@@ -15,7 +15,7 @@ module.exports = function(request, response, next) {
 		} catch(error) {
 			return response.status(500).json({
 				status: 500,
-				success: true,
+				success: false,
 				message: "Internal server error",
 				error: error
 			});
