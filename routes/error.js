@@ -1,13 +1,12 @@
-var error = {
+const error = {
 	// Handler for the HTTP 404 Not Found error
-	notFound: function(request, response, next) {
-
+	notFound(request, response, next) {
 		response.status(404).json({
 			status: 404,
-			message: "Not Found"
+			message: 'Not Found'
 		});
 
-  		next();
+		next();
 	}
 };
 

@@ -1,47 +1,45 @@
 
-var authors = {
+const authors = {
 
-	getAll: function(request, response) {
+	getAll(request, response) {
 		return response.status(200).json({
 			status: 200,
-			message: "GET all authors"
+			message: 'GET all authors'
 		});
 	},
 
-	getOne: function(request, response) {
+	getOne(request, response) {
 		return response.status(200).json({
 			status: 200,
-			message: "GET one author with id: " + request.params.id
+			message: `GET one author with id: ${request.params.id}`
 		});
 	},
 
-	create: function(request, response) {
+	create(request, response) {
 		return response.status(201).json({
 			status: 201,
 			success: true,
-			message: "CREATE author",
+			message: 'CREATE author',
 			body: request.body
 		});
 	},
 
-	update: function(request, response) {
+	update(request, response) {
 		return response.status(200).json({
 			status: 200,
 			success: true,
-			message: "UPDATE author with id: " + request.params.id,
+			message: `UPDATE author with id: ${request.params.id}`,
 			body: request.body
 		});
 	},
 
-	delete: function(request, response) {
+	delete(request, response) {
 		return response.status(200).json({
 			status: 200,
 			success: true,
-			message: "DELETE author with id: " + request.params.id
+			message: `DELETE author with id: ${request.params.id}`
 		});
-
 	}
 };
-
 
 module.exports = authors;
