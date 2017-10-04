@@ -1,5 +1,6 @@
 const express = require('express');
-const router = express.Router();
+
+const router = new express.Router();
 
 // Routes handlers
 const authors = require('./authors.js');
@@ -12,19 +13,19 @@ const illustrators = require('./illustrators.js');
 //
 
 // Frist path handled
-router.get('/homecomix', function(request, response) {
+router.get('/homecomix', (request, response) => {
 	response.status(200).json({
 		status: 200,
-		message: "Welcome to the HomeComix-API"
+		message: 'Welcome to the HomeComix-API'
 	});
 });
 
 // Testing purpose only
-router.get('/homecomix/testmiddlewares/token', function(request, response) {
+router.get('/homecomix/testmiddlewares/token', (request, response) => {
 	return response.status(200).json({
 		status: 200,
 		success: true,
-		message: "Test middleware :)"
+		message: 'Test middleware :)'
 	});
 });
 
