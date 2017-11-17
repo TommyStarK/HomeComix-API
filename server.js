@@ -1,6 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const router = require('./routes/router.js');
+const database = require('./database.js');
+
+const success = '\x1b[32mOK\x1b[0m';
+const failure = '\x1b[31mFAILED\x1b[0m';
+const homecomixApi = '[\x1b[35mHomeComix-API\x1b[0m] ';
 
 const app = express();
 
@@ -22,5 +27,13 @@ app.use('/', router);
 
 // Starts the server
 app.listen(port, () => {
-	console.log(`HomeComix server listening on port ${port}`);
+	console.log(`${homecomixApi}server listening on port ${port}`);
+	database.connect(err => {
+		if (err) {
+			console.log(`${homecomixApi}Connection to HomeComix database [${failure}]`);
+			throw (err);
+		} else {
+			console.log(`${homecomixApi}Connection to HomeComix database [${success}]`);
+		}
+	});
 });
