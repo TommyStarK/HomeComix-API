@@ -5,18 +5,20 @@ const books = {
 	getAll(request, response) {
 		const db = database.get();
 
-		const cursor = db.collection('books').find({});
+		db.collection('books').find({}).toArray((err, docs) => {
+			if (err) {
+				console.log(err);
+				return response.status(500).json({
+					status: 500,
+					message: 'Internal server error'
+				});
+			}
 
-		cursor.forEach(item => {
-			console.log(item);
-		}, err => {
-			console.log(err);
-			database.close();
-		});
-
-		return response.status(200).json({
-			status: 200,
-			message: 'GET all books'
+			return response.status(200).json({
+				status: 200,
+				message: 'GET all books',
+				books: docs
+			});
 		});
 	},
 
