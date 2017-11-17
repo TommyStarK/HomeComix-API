@@ -10,12 +10,14 @@ const books = {
 				console.log(err);
 				return response.status(500).json({
 					status: 500,
+					success: false,
 					message: 'Internal server error'
 				});
 			}
 
 			return response.status(200).json({
 				status: 200,
+				success: true,
 				message: 'GET all books',
 				books: docs
 			});
@@ -25,6 +27,7 @@ const books = {
 	getOne(request, response) {
 		return response.status(200).json({
 			status: 200,
+			success: true,
 			message: `GET one book with id: ${request.params.id}`
 		});
 	},
@@ -34,7 +37,12 @@ const books = {
 
 		db.collection('books').insertOne(request.body, err => {
 			if (err) {
-				throw (err);
+				console.log(err);
+				return response.status(500).json({
+					status: 500,
+					success: false,
+					message: 'Internal server error'
+				});
 			}
 		});
 
