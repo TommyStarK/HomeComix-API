@@ -1,7 +1,19 @@
+const database = require('../database.js');
 
 const books = {
 
 	getAll(request, response) {
+		const db = database.get();
+
+		const cursor = db.collection('books').find({});
+
+		cursor.forEach(item => {
+			console.log(item);
+		}, err => {
+			console.log(err);
+			database.close();
+		});
+
 		return response.status(200).json({
 			status: 200,
 			message: 'GET all books'
@@ -16,6 +28,14 @@ const books = {
 	},
 
 	create(request, response) {
+		const db = database.get();
+
+		db.collection('books').insertOne(request.body, err => {
+			if (err) {
+				throw (err);
+			}
+		});
+
 		return response.status(201).json({
 			status: 201,
 			success: true,
