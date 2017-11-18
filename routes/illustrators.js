@@ -8,7 +8,6 @@ const illustrators = {
 		try {
 			db.collection('illustrators').find({}).toArray((err, docs) => {
 				if (err) {
-					database.close();
 					throw (err);
 				}
 
@@ -20,6 +19,8 @@ const illustrators = {
 				});
 			});
 		} catch (err) {
+			console.log(err);
+			database.close();
 			return response.status(500).json({
 				status: 500,
 				success: false,
