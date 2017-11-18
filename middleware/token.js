@@ -4,7 +4,7 @@ module.exports = (request, response, next) => {
 	if (token) {
 		try {
 			// Decode token
-			console.log('[%s] decoding token', request.url);
+			console.log(`route: [${request.url}] | token: ${token}`);
 			next();
 		} catch (err) {
 			return response.status(500).json({

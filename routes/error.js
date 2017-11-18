@@ -3,6 +3,7 @@ const error = {
 	notFound(request, response, next) {
 		response.status(404).json({
 			status: 404,
+			success: false,
 			message: 'Not Found'
 		});
 

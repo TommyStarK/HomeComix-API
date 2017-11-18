@@ -8,7 +8,6 @@ const books = {
 		try {
 			db.collection('books').find({}).toArray((err, docs) => {
 				if (err) {
-					database.close();
 					throw (err);
 				}
 
@@ -20,6 +19,8 @@ const books = {
 				});
 			});
 		} catch (err) {
+			console.log(err);
+			database.close();
 			return response.status(500).json({
 				status: 500,
 				success: false,
@@ -43,7 +44,6 @@ const books = {
 		try {
 			db.collection('books').insertOne(request.body, (err, result) => {
 				if (err) {
-					database.close();
 					throw (err);
 				}
 
@@ -56,6 +56,8 @@ const books = {
 				});
 			});
 		} catch (err) {
+			console.log(err);
+			database.close();
 			return response.status(500).json({
 				status: 500,
 				success: false,
