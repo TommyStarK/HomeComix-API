@@ -5,25 +5,27 @@ const books = {
 	getAll(request, response) {
 		const db = database.get();
 
-		console.log(request.params);
-		db.collection('books').find({}).toArray((err, docs) => {
-			if (err) {
-				console.log(err);
-				database.close();
-				return response.status(500).json({
-					status: 500,
-					success: false,
-					message: 'Internal server error'
-				});
-			}
+		try {
+			db.collection('books').find({}).toArray((err, docs) => {
+				if (err) {
+					database.close();
+					throw (err);
+				}
 
-			return response.status(200).json({
-				status: 200,
-				success: true,
-				message: 'GET all books',
-				books: docs
+				return response.status(200).json({
+					status: 200,
+					success: true,
+					message: 'GET all books',
+					books: docs
+				});
 			});
-		});
+		} catch (err) {
+			return response.status(500).json({
+				status: 500,
+				success: false,
+				message: 'Internal server error'
+			});
+		}
 	},
 
 	getOne(request, response) {
@@ -38,24 +40,28 @@ const books = {
 	create(request, response) {
 		const db = database.get();
 
-		db.collection('books').insertOne(request.body, err => {
-			if (err) {
-				console.log(err);
-				database.close();
-				return response.status(500).json({
-					status: 500,
-					success: false,
-					message: 'Internal server error'
-				});
-			}
+		try {
+			db.collection('books').insertOne(request.body, (err, result) => {
+				if (err) {
+					database.close();
+					throw (err);
+				}
 
-			return response.status(201).json({
-				status: 201,
-				success: true,
-				message: 'CREATE book',
-				body: request.body
+				console.log(result);
+				return response.status(201).json({
+					status: 201,
+					success: true,
+					message: 'CREATE book',
+					body: request.body
+				});
 			});
-		});
+		} catch (err) {
+			return response.status(500).json({
+				status: 500,
+				success: false,
+				message: 'Internal server error'
+			});
+		}
 	},
 
 	update(request, response) {
