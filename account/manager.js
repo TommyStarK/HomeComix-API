@@ -59,20 +59,12 @@ const account = {
 		}
 	},
 
-	login(request, response) {
+	authorize(request, response) {
 		console.log(request.body);
 		return response.status(200).json({
 			status: 200,
 			success: true,
 			message: 'test login'
-		});
-	},
-
-	logout(request, response) {
-		return response.status(200).json({
-			status: 200,
-			success: true,
-			message: 'test logout'
 		});
 	},
 

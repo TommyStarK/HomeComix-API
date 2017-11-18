@@ -20,8 +20,7 @@ app.use(bodyParser.json());
 
 // Account management
 app.post('/api.homecomix/register', account.register);
-app.post('/api.homecomix/login', account.login);
-app.get('/api.homecomix/logout', account.logout);
+app.post('/api.homecomix/authorize', account.authorize);
 app.delete('/api.homecomix/delete', account.delete);
 
 // Middlewares
