@@ -5,9 +5,11 @@ const books = {
 	getAll(request, response) {
 		const db = database.get();
 
+		console.log(request.params);
 		db.collection('books').find({}).toArray((err, docs) => {
 			if (err) {
 				console.log(err);
+				database.close();
 				return response.status(500).json({
 					status: 500,
 					success: false,
@@ -25,6 +27,7 @@ const books = {
 	},
 
 	getOne(request, response) {
+		console.log(request.params);
 		return response.status(200).json({
 			status: 200,
 			success: true,
@@ -38,19 +41,20 @@ const books = {
 		db.collection('books').insertOne(request.body, err => {
 			if (err) {
 				console.log(err);
+				database.close();
 				return response.status(500).json({
 					status: 500,
 					success: false,
 					message: 'Internal server error'
 				});
 			}
-		});
 
-		return response.status(201).json({
-			status: 201,
-			success: true,
-			message: 'CREATE book',
-			body: request.body
+			return response.status(201).json({
+				status: 201,
+				success: true,
+				message: 'CREATE book',
+				body: request.body
+			});
 		});
 	},
 

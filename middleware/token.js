@@ -1,4 +1,4 @@
-module.exports = function (request, response, next) {
+module.exports = (request, response, next) => {
 	const token = (request.body && request.body.access_token) || (request.query && request.query.access_token) || request.headers['x-access-token'] || request.headers.authorization;
 
 	if (token) {
