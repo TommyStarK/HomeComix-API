@@ -1,14 +1,11 @@
 const error = {
-	// Handler for the HTTP 404 Not Found error
-	notFound(request, response, next) {
-		response.status(404).json({
-			status: 404,
-			success: false,
-			message: 'Not Found'
-		});
+  // Handler for the HTTP 404 Not Found error
+  notFound(request, response, next) {
+    response.status(404).json(
+        {status: 404, success: false, message: 'Not Found'});
 
-		next();
-	}
+    next();
+  }
 };
 
 module.exports = error;
