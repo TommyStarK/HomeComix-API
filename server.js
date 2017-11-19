@@ -24,7 +24,7 @@ app.post('/api.homecomix/authorize', account.authorize);
 app.delete('/api.homecomix/delete', account.delete);
 
 // Middlewares
-// Ensures that all requests starting with /testmiddlewares/* will be checked
+// Ensures that all requests starting with /api.homecomix/:uid/* will be checked
 // for the token
 app.all('/api.homecomix/:uid/*', [require('./middleware/token')]);
 
@@ -33,13 +33,15 @@ app.use('/', router);
 
 // Starts the server
 app.listen(port, () => {
-	console.log(`${homecomixApi}Server listening on port ${port} [${success}]`);
-	database.connect(err => {
-		if (err) {
-			console.log(`${homecomixApi}Connection to HomeComix database [${failure}]`);
-			throw (err);
-		} else {
-			console.log(`${homecomixApi}Connection to HomeComix database [${success}]`);
-		}
-	});
+  console.log(`${homecomixApi}Server listening on port ${port} [${success}]`);
+  database.connect(err => {
+    if (err) {
+      console.log(
+          `${homecomixApi}Connection to HomeComix database [${failure}]`);
+      throw (err);
+    } else {
+      console.log(
+          `${homecomixApi}Connection to HomeComix database [${success}]`);
+    }
+  });
 });
