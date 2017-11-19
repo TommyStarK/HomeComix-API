@@ -30,7 +30,6 @@ const books = {
 	},
 
 	getOne(request, response) {
-		console.log(request.params);
 		return response.status(200).json({
 			status: 200,
 			success: true,
@@ -42,17 +41,15 @@ const books = {
 		const db = database.get();
 
 		try {
-			db.collection('books').insertOne(request.body, (err, result) => {
+			db.collection('books').insertOne(request.body, err => {
 				if (err) {
 					throw (err);
 				}
 
-				console.log(result);
 				return response.status(201).json({
 					status: 201,
 					success: true,
-					message: 'CREATE book',
-					body: request.body
+					message: 'CREATE book success'
 				});
 			});
 		} catch (err) {
