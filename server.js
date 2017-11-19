@@ -33,7 +33,7 @@ app.use('/', router);
 
 // Starts the server
 app.listen(port, () => {
-	console.log(`${homecomixApi}Server listening on port ${port}`);
+	console.log(`${homecomixApi}Server listening on port ${port} [${success}]`);
 	database.connect(err => {
 		if (err) {
 			console.log(`${homecomixApi}Connection to HomeComix database [${failure}]`);
