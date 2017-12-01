@@ -2,21 +2,16 @@ const database = require('../database.js')
 
 const books = {
 
-  getAll (request, response) {
+  async getAll (request, response) {
     const db = database.get()
 
     try {
-      db.collection('books').find({}).toArray((err, docs) => {
-        if (err) {
-          throw (err)
-        }
-
-        return response.status(200).json({
-          status: 200,
-          success: true,
-          message: 'GET all books',
-          books: docs
-        })
+      const books = await db.collection('books').find({}).toArray()
+      return response.status(200).json({
+        status: 200,
+        success: true,
+        message: 'GET all books',
+        books: books
       })
     } catch (err) {
       console.log(err)
@@ -43,23 +38,8 @@ const books = {
   },
 
   create (request, response) {
-    const db = database.get()
-
-    try {
-      db.collection('books').insertOne(request.body, err => {
-        if (err) {
-          throw (err)
-        }
-
-        return response.status(201).json(
-            {status: 201, success: true, message: 'CREATE book success'})
-      })
-    } catch (err) {
-      console.log(err)
-      database.close()
-      return response.status(500).json(
-          {status: 500, success: false, message: 'Internal server error'})
-    }
+    return response.status(201).json(
+        {status: 201, success: true, message: 'CREATE book success'})
   },
 
   update (request, response) {
