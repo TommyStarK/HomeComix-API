@@ -2,21 +2,16 @@ const database = require('../database.js')
 
 const authors = {
 
-  getAll (request, response) {
+  async getAll (request, response) {
     const db = database.get()
 
     try {
-      db.collection('authors').find({}).toArray((err, docs) => {
-        if (err) {
-          throw (err)
-        }
-
-        return response.status(200).json({
-          status: 200,
-          success: true,
-          message: 'GET all authors',
-          books: docs
-        })
+      const docs = await db.collection('authors').find({}).toArray()
+      return response.status(200).json({
+        status: 200,
+        success: true,
+        message: 'GET all authors',
+        books: docs
       })
     } catch (err) {
       console.log(err)
