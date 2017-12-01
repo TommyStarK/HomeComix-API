@@ -2,21 +2,16 @@ const database = require('../database.js')
 
 const illustrators = {
 
-  getAll (request, response) {
+  async getAll (request, response) {
     const db = database.get()
 
     try {
-      db.collection('illustrators').find({}).toArray((err, docs) => {
-        if (err) {
-          throw (err)
-        }
-
-        return response.status(200).json({
-          status: 200,
-          success: true,
-          message: 'GET all illustrators',
-          books: docs
-        })
+      const docs = await db.collection('illustrators').find({}).toArray()
+      return response.status(200).json({
+        status: 200,
+        success: true,
+        message: 'GET all illustrators',
+        books: docs
       })
     } catch (err) {
       console.log(err)

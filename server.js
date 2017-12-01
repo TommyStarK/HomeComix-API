@@ -23,25 +23,22 @@ app.post('/api.homecomix/register', account.register)
 app.post('/api.homecomix/authorize', account.authorize)
 app.delete('/api.homecomix/delete', account.delete)
 
-app.get('/api.homecomix/users', (request, response) => {
+async function getUsers (request, response) {
   const db = database.get()
 
   try {
-    db.collection('users').find({}).toArray((err, docs) => {
-      if (err) {
-        throw (err)
-      }
-
-      return response.status(200).json(
-          {status: 200, success: true, message: 'GET all users', users: docs})
-    })
+    const users = await db.collection('users').find({}).toArray()
+    return response.status(200).json(
+        {status: 200, success: true, message: 'GET all users', users: users})
   } catch (err) {
     console.log(err)
     database.close()
     return response.status(500).json(
         {status: 500, success: false, message: 'Internal server error'})
   }
-})
+}
+
+app.get('/api.homecomix/users', getUsers)
 
 // Middlewares
 // Ensures that all requests starting with /api.homecomix/:uid/* will be checked

@@ -4,7 +4,7 @@ const database = require('../database.js')
 
 const account = {
 
-  register (request, response) {
+  async register (request, response) {
     const db = database.get()
 
     if (request.body.username === undefined ||
@@ -23,46 +23,36 @@ const account = {
     }
 
     try {
-      db.collection('users').findOne(
+      const doc = await db.collection('users').findOne(
         {
           $or: [
             {username: request.body.username},
             {email: utils.hash(request.body.email)}
           ]
-        },
-          (err, doc) => {
-            if (err) {
-              throw (err)
-            }
+        })
 
-            if (doc) {
-              const t =
-                  doc.username === request.body.username ? 'Username' : 'Email'
-              return response.status(409).json({
-                status: 409,
-                success: false,
-                message: `Conflict: ${t} already used`
-              })
-            }
+      if (doc) {
+        const t =
+            doc.username === request.body.username ? 'Username' : 'Email'
+        return response.status(409).json({
+          status: 409,
+          success: false,
+          message: `Conflict: ${t} already used`
+        })
+      }
 
-            db.collection('users').insertOne(
-              {
-                username: request.body.username,
-                password: utils.hash(request.body.password),
-                email: utils.hash(request.body.email)
-              },
-                err => {
-                  if (err) {
-                    throw (err)
-                  }
+      await db.collection('users').insertOne(
+        {
+          username: request.body.username,
+          password: utils.hash(request.body.password),
+          email: utils.hash(request.body.email)
+        })
 
-                  return response.status(201).json({
-                    status: 201,
-                    success: true,
-                    message: 'Account registration succeed'
-                  })
-                })
-          })
+      return response.status(201).json({
+        status: 201,
+        success: true,
+        message: 'Account registration succeed'
+      })
     } catch (err) {
       console.log(err)
       database.close()
@@ -71,7 +61,7 @@ const account = {
     }
   },
 
-  authorize (request, response) {
+  async authorize (request, response) {
     const db = database.get()
 
     if (request.body.username === undefined ||
@@ -84,37 +74,25 @@ const account = {
     }
 
     try {
-      db.collection('users').findOne(
+      const doc = await db.collection('users').findOne(
         {
           username: request.body.username,
           password: utils.hash(request.body.password)
-        },
-          (err, doc) => {
-            if (err) {
-              throw (err)
-            }
+        })
 
-            if (doc) {
-              const payload = {username: doc.username, userId: doc._id}
-
-              jwt.sign(
-                  payload, '1S3cR€T!', {expiresIn: '24h'}, (err, newToken) => {
-                    if (err) {
-                      throw (err)
-                    }
-
-                    return response.status(200).json({
-                      status: 200,
-                      success: true,
-                      userId: doc._id,
-                      token: newToken
-                    })
-                  })
-            } else {
-              return response.status(401).json(
-                  {status: 401, success: false, message: 'Wrong credentials'})
-            }
-          })
+      if (doc) {
+        const payload = {username: doc.username, userId: doc._id}
+        const newToken = await jwt.sign(payload, '1S3cR€T!', {expiresIn: '24h'})
+        return response.status(200).json({
+          status: 200,
+          success: true,
+          userId: doc._id,
+          token: newToken
+        })
+      } else {
+        return response.status(401).json(
+            {status: 401, success: false, message: 'Wrong credentials'})
+      }
     } catch (err) {
       console.log(err)
       database.close()
@@ -123,7 +101,7 @@ const account = {
     }
   },
 
-  delete (request, response) {
+  async delete (request, response) {
     const db = database.get()
 
     if (request.body.username === undefined ||
@@ -136,27 +114,22 @@ const account = {
     }
 
     try {
-      db.collection('users').findOneAndDelete(
+      const doc = await db.collection('users').findOneAndDelete(
         {
           username: request.body.username,
           password: utils.hash(request.body.password)
-        },
-          (err, doc) => {
-            if (err) {
-              throw (err)
-            }
+        })
 
-            if (doc && doc.value !== null) {
-              return response.status(200).json({
-                status: 200,
-                success: true,
-                message: 'Account deleted successfully'
-              })
-            }
+      if (doc && doc.value !== null) {
+        return response.status(200).json({
+          status: 200,
+          success: true,
+          message: 'Account deleted successfully'
+        })
+      }
 
-            return response.status(401).json(
-                {status: 401, success: false, message: 'Wrong credentials'})
-          })
+      return response.status(401).json(
+          {status: 401, success: false, message: 'Wrong credentials'})
     } catch (err) {
       console.log(err)
       database.close()
