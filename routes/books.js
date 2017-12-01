@@ -1,14 +1,14 @@
-const database = require('../database.js');
+const database = require('../database.js')
 
 const books = {
 
-  getAll(request, response) {
-    const db = database.get();
+  getAll (request, response) {
+    const db = database.get()
 
     try {
       db.collection('books').find({}).toArray((err, docs) => {
         if (err) {
-          throw (err);
+          throw (err)
         }
 
         return response.status(200).json({
@@ -16,51 +16,59 @@ const books = {
           success: true,
           message: 'GET all books',
           books: docs
-        });
-      });
+        })
+      })
     } catch (err) {
-      console.log(err);
-      database.close();
+      console.log(err)
+      database.close()
       return response.status(500).json(
-          {status: 500, success: false, message: 'Internal server error'});
+          {status: 500, success: false, message: 'Internal server error'})
     }
   },
 
-  getOne(request, response) {
+  getOne (request, response) {
     return response.status(200).json({
       status: 200,
       success: true,
       message: `GET one book with id: ${request.params.id}`
-    });
+    })
   },
 
-  create(request, response) {
-    const db = database.get();
+  getPage (request, response) {
+    return response.status(200).json({
+      status: 200,
+      success: true,
+      message: `GET page of book with id: ${request.params.id} page number: ${request.params.pid}`
+    })
+  },
+
+  create (request, response) {
+    const db = database.get()
 
     try {
       db.collection('books').insertOne(request.body, err => {
         if (err) {
-          throw (err);
+          throw (err)
         }
 
         return response.status(201).json(
-            {status: 201, success: true, message: 'CREATE book success'});
-      });
+            {status: 201, success: true, message: 'CREATE book success'})
+      })
     } catch (err) {
-      console.log(err);
-      database.close();
+      console.log(err)
+      database.close()
       return response.status(500).json(
-          {status: 500, success: false, message: 'Internal server error'});
+          {status: 500, success: false, message: 'Internal server error'})
     }
   },
 
-  update(request, response) {
+  update (request, response) {
     return response.status(200).json({
       status: 200,
       success: true,
       message: `UPDATE book with id: ${request.params.id}`,
       body: request.body
-    });
+    })
   },
 
   delete (request, response) {
@@ -68,8 +76,8 @@ const books = {
       status: 200,
       success: true,
       message: `DELETE book with id: ${request.params.id}`
-    });
+    })
   }
-};
+}
 
-module.exports = books;
+module.exports = books

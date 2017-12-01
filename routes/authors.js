@@ -1,14 +1,14 @@
-const database = require('../database.js');
+const database = require('../database.js')
 
 const authors = {
 
-  getAll(request, response) {
-    const db = database.get();
+  getAll (request, response) {
+    const db = database.get()
 
     try {
       db.collection('authors').find({}).toArray((err, docs) => {
         if (err) {
-          throw (err);
+          throw (err)
         }
 
         return response.status(200).json({
@@ -16,37 +16,37 @@ const authors = {
           success: true,
           message: 'GET all authors',
           books: docs
-        });
-      });
+        })
+      })
     } catch (err) {
-      console.log(err);
-      database.close();
+      console.log(err)
+      database.close()
       return response.status(500).json(
-          {status: 500, success: false, message: 'Internal server error'});
+          {status: 500, success: false, message: 'Internal server error'})
     }
   },
 
-  getOne(request, response) {
+  getOne (request, response) {
     return response.status(200).json(
-        {status: 200, message: `GET one author with id: ${request.params.id}`});
+        {status: 200, message: `GET one author with id: ${request.params.id}`})
   },
 
-  create(request, response) {
+  create (request, response) {
     return response.status(201).json({
       status: 201,
       success: true,
       message: 'CREATE author',
       body: request.body
-    });
+    })
   },
 
-  update(request, response) {
+  update (request, response) {
     return response.status(200).json({
       status: 200,
       success: true,
       message: `UPDATE author with id: ${request.params.id}`,
       body: request.body
-    });
+    })
   },
 
   delete (request, response) {
@@ -54,8 +54,8 @@ const authors = {
       status: 200,
       success: true,
       message: `DELETE author with id: ${request.params.id}`
-    });
+    })
   }
-};
+}
 
-module.exports = authors;
+module.exports = authors
