@@ -1,14 +1,14 @@
-const database = require('../database.js');
+const database = require('../database.js')
 
 const collections = {
 
-  getAll(request, response) {
-    const db = database.get();
+  getAll (request, response) {
+    const db = database.get()
 
     try {
       db.collection('collections').find({}).toArray((err, docs) => {
         if (err) {
-          throw (err);
+          throw (err)
         }
 
         return response.status(200).json({
@@ -16,39 +16,39 @@ const collections = {
           success: true,
           message: 'GET all collections',
           books: docs
-        });
-      });
+        })
+      })
     } catch (err) {
-      console.log(err);
-      database.close();
+      console.log(err)
+      database.close()
       return response.status(500).json(
-          {status: 500, success: false, message: 'Internal server error'});
+          {status: 500, success: false, message: 'Internal server error'})
     }
   },
 
-  getOne(request, response) {
+  getOne (request, response) {
     return response.status(200).json({
       status: 200,
       message: `GET one collection with id: ${request.params.id}`
-    });
+    })
   },
 
-  create(request, response) {
+  create (request, response) {
     return response.status(201).json({
       status: 201,
       success: true,
       message: 'CREATE collection',
       body: request.body
-    });
+    })
   },
 
-  update(request, response) {
+  update (request, response) {
     return response.status(200).json({
       status: 200,
       success: true,
       message: `UPDATE collection with id: ${request.params.id}`,
       body: request.body
-    });
+    })
   },
 
   delete (request, response) {
@@ -56,8 +56,8 @@ const collections = {
       status: 200,
       success: true,
       message: `DELETE collection with id: ${request.params.id}`
-    });
+    })
   }
-};
+}
 
-module.exports = collections;
+module.exports = collections

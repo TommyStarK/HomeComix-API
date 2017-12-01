@@ -1,12 +1,12 @@
-const express = require('express');
+const express = require('express')
 
-const router = new express.Router();
+const router = new express.Router()
 
 // Routes handlers
-const authors = require('./authors.js');
-const books = require('./books.js');
-const collections = require('./collections.js');
-const illustrators = require('./illustrators.js');
+const authors = require('./authors.js')
+const books = require('./books.js')
+const collections = require('./collections.js')
+const illustrators = require('./illustrators.js')
 
 //
 // Routing
@@ -15,34 +15,35 @@ const illustrators = require('./illustrators.js');
 // Frist path handled
 router.get('/api.homecomix', (request, response) => {
   response.status(200).json(
-      {status: 200, message: 'Welcome to the HomeComix-API'});
-});
+      {status: 200, message: 'Welcome to the HomeComix-API'})
+})
 
-router.get('/api.homecomix/:uid/authors', authors.getAll);
-router.get('/api.homecomix/:uid/author/:id', authors.getOne);
-router.post('/api.homecomix/:uid/author', authors.create);
-router.put('/api.homecomix/:uid/author/:id', authors.update);
-router.delete('/api.homecomix/:uid/author/:id', authors.delete);
+router.get('/api.homecomix/:uid/authors', authors.getAll)
+router.get('/api.homecomix/:uid/author/:id', authors.getOne)
+router.post('/api.homecomix/:uid/author', authors.create)
+router.put('/api.homecomix/:uid/author/:id', authors.update)
+router.delete('/api.homecomix/:uid/author/:id', authors.delete)
 
-router.get('/api.homecomix/:uid/books', books.getAll);
-router.get('/api.homecomix/:uid/book/:id', books.getOne);
-router.post('/api.homecomix/:uid/book', books.create);
-router.put('/api.homecomix/:uid/book/:id', books.update);
-router.delete('/api.homecomix/:uid/book/:id', books.delete);
+router.get('/api.homecomix/:uid/books', books.getAll)
+router.get('/api.homecomix/:uid/book/:id', books.getOne)
+router.get('/api.homecomix/:uid/book/:id/page/:pid', books.getPage)
+router.post('/api.homecomix/:uid/book', books.create)
+router.put('/api.homecomix/:uid/book/:id', books.update)
+router.delete('/api.homecomix/:uid/book/:id', books.delete)
 
-router.get('/api.homecomix/:uid/collections', collections.getAll);
-router.get('/api.homecomix/:uid/collection/:id', collections.getOne);
-router.post('/api.homecomix/:uid/collection', collections.create);
-router.put('/api.homecomix/:uid/collection/:id', collections.update);
-router.delete('/api.homecomix/:uid/collection/:id', collections.delete);
+router.get('/api.homecomix/:uid/collections', collections.getAll)
+router.get('/api.homecomix/:uid/collection/:id', collections.getOne)
+router.post('/api.homecomix/:uid/collection', collections.create)
+router.put('/api.homecomix/:uid/collection/:id', collections.update)
+router.delete('/api.homecomix/:uid/collection/:id', collections.delete)
 
-router.get('/api.homecomix/:uid/illustrators', illustrators.getAll);
-router.get('/api.homecomix/:uid/illustrator/:id', illustrators.getOne);
-router.post('/api.homecomix/:uid/illustrator', illustrators.create);
-router.put('/api.homecomix/:uid/illustrator/:id', illustrators.update);
-router.delete('/api.homecomix/:uid/illustrator/:id', illustrators.delete);
+router.get('/api.homecomix/:uid/illustrators', illustrators.getAll)
+router.get('/api.homecomix/:uid/illustrator/:id', illustrators.getOne)
+router.post('/api.homecomix/:uid/illustrator', illustrators.create)
+router.put('/api.homecomix/:uid/illustrator/:id', illustrators.update)
+router.delete('/api.homecomix/:uid/illustrator/:id', illustrators.delete)
 
 // If no route is matched a '404 Not Found' error is returned.
-router.use(require('./error.js').notFound);
+router.use(require('./error.js').notFound)
 
-module.exports = router;
+module.exports = router
