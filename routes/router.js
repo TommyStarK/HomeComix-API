@@ -1,5 +1,6 @@
 const express = require('express')
-
+const multer = require('multer')
+const upload = multer({ dest: '.uploads/' })
 const router = new express.Router()
 
 // Routes handlers
@@ -15,7 +16,7 @@ const illustrators = require('./illustrators.js')
 // Frist path handled
 router.get('/api.homecomix', (request, response) => {
   response.status(200).json(
-      {status: 200, message: 'Welcome to the HomeComix-API'})
+      {status: 200, success: true, message: 'Welcome to the HomeComix-API'})
 })
 
 router.get('/api.homecomix/:uid/authors', authors.getAll)
@@ -27,7 +28,7 @@ router.delete('/api.homecomix/:uid/author/:id', authors.delete)
 router.get('/api.homecomix/:uid/books', books.getAll)
 router.get('/api.homecomix/:uid/book/:id', books.getOne)
 router.get('/api.homecomix/:uid/book/:id/page/:pid', books.getPage)
-router.post('/api.homecomix/:uid/book', books.create)
+router.post('/api.homecomix/:uid/book', upload.single('file'), books.create)
 router.put('/api.homecomix/:uid/book/:id', books.update)
 router.delete('/api.homecomix/:uid/book/:id', books.delete)
 

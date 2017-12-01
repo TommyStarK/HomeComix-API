@@ -38,6 +38,7 @@ const books = {
   },
 
   create (request, response) {
+    console.log(request.file)
     return response.status(201).json(
         {status: 201, success: true, message: 'CREATE book success'})
   },
