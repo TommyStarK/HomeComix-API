@@ -40,7 +40,7 @@ module.exports = (request, response, next) => {
           })
       } catch (err) {
         return response.status(500).json(
-          { status: 500, success: true, message: 'Internal server error' })
+          { status: 500, success: false, message: 'Internal server error' })
       }
     })
   } else {

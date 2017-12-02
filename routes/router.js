@@ -44,17 +44,10 @@ router.post('/api.homecomix/:uid/illustrator', illustrators.create)
 router.put('/api.homecomix/:uid/illustrator/:id', illustrators.update)
 router.delete('/api.homecomix/:uid/illustrator/:id', illustrators.delete)
 
-// If no route is matched a '404 Not Found' error is returned.
-router.all('*', require('./error.js').notFound)
+// Error middleware to catch unexpected errors
+router.use(require('../middleware/error.js').errorHandler)
 
-// Error middleware
-router.use((err, request, response, next) => {
-  if (err) {
-    console.log(err)
-    return response.status(500).json(
-      { status: 500, success: true, message: 'Internal server error' })
-  }
-  next()
-})
+// If no route is matched a '404 Not Found' error is returned.
+router.all('*', require('../middleware/error.js').notFound)
 
 module.exports = router
