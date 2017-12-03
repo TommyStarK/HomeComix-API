@@ -14,12 +14,16 @@ module.exports = {
   },
 
   unrar (target, destination) {
-    const Unrar = require('node-unrar')
-    const rar = new Unrar(target)
-    rar.extract(destination, null, err => {
-      if (err) {
-        throw (err)
-      }
+    return new Promise((resolve, reject) => {
+      const Unrar = require('node-unrar')
+      const rar = new Unrar(target)
+      rar.extract(destination, null, (error, result) => {
+        if (error) {
+          reject(error)
+        } else {
+          resolve(result)
+        }
+      })
     })
   },
 

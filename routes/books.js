@@ -80,7 +80,7 @@ const books = {
         })
       }
 
-      handler(request.file.path, '.uploads/')
+      await handler(request.file.path, '.uploads/')
 
       await db.collection('books').insertOne({
         name: request.file.originalname,
@@ -106,6 +106,8 @@ const books = {
         success: false,
         message: 'Internal server error'
       })
+    } finally {
+      await utils.removeContentDirectory('.uploads/')
     }
   },
 
