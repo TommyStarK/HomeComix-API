@@ -1,4 +1,3 @@
-const fs = require('fs')
 
 module.exports = {
   hash (target) {
@@ -44,7 +43,7 @@ module.exports = {
 
   readdirAsync (path) {
     return new Promise((resolve, reject) => {
-      fs.readdir(path, (error, result) => {
+      require('fs').readdir(path, (error, result) => {
         if (error) {
           reject(error)
         } else {
@@ -56,7 +55,7 @@ module.exports = {
 
   statAsync (path) {
     return new Promise((resolve, reject) => {
-      fs.stat(path, (error, result) => {
+      require('fs').stat(path, (error, result) => {
         if (error) {
           reject(error)
         } else {
@@ -68,7 +67,7 @@ module.exports = {
 
   unlinkAsync (path) {
     return new Promise((resolve, reject) => {
-      fs.unlink(path, (error, result) => {
+      require('fs').unlink(path, (error, result) => {
         if (error) {
           reject(error)
         } else {
@@ -78,11 +77,11 @@ module.exports = {
     })
   },
 
-  async removeContentDirectory (path) {
+  async removeContentDirectory (target) {
     try {
-      const files = await this.readdirAsync(path)
+      const files = await this.readdirAsync(target)
       for (let file of files) {
-        const filePath = require('path').join(path, file)
+        const filePath = require('path').join(target, file)
         const stat = await this.statAsync(filePath)
         if (stat.isFile(filePath)) {
           await this.unlinkAsync(filePath)
