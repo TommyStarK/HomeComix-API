@@ -6,7 +6,10 @@ const authors = {
     const db = database.get()
 
     try {
-      const docs = await db.collection('authors').find({}).toArray()
+      const docs = await db.collection('authors').find({
+        userId: request.params.uid
+      }).toArray()
+
       return response.status(200).json({
         status: 200,
         success: true,
@@ -16,14 +19,20 @@ const authors = {
     } catch (err) {
       console.log(err)
       database.close()
-      return response.status(500).json(
-          {status: 500, success: false, message: 'Internal server error'})
+      return response.status(500).json({
+        status: 500,
+        success: false,
+        message: 'Internal server error'
+      })
     }
   },
 
   getOne (request, response) {
-    return response.status(200).json(
-        {status: 200, message: `GET one author with id: ${request.params.id}`})
+    return response.status(200).json({
+      status: 200,
+      success: true,
+      message: `GET one author with id: ${request.params.id}`
+    })
   },
 
   create (request, response) {

@@ -61,7 +61,29 @@ const database = {
   },
 
   initBooks () {
-    console.log('init books collection')
+    const db = database.get()
+
+    db.createCollection('books', { validator:
+    { $and:
+    [
+      { name: { $type: 'string' } },
+      { hashname: { $type: 'string' } },
+      { userId: { $type: 'string' } },
+      { encoding: { $type: 'string' } },
+      { mimetype: { $type: 'string' } },
+      { size: { $type: 'int' } },
+      { pagesNumber: { $type: 'int' } },
+      { content: [
+        { id: { $type: 'string' } },
+        { name: { $type: 'string' } },
+        { data: { $type: 'string' } }
+      ]
+      }
+    ]
+    },
+      validationLevel: 'strict',
+      validationAction: 'warn'
+    })
   },
 
   initAuthors () {
