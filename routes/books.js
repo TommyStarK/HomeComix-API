@@ -1,6 +1,7 @@
+const path = require('path')
+const extension = require('path').extname
 const utils = require('../utils.js')
 const database = require('../database.js')
-const extension = require('path').extname
 
 const books = {
 
@@ -46,8 +47,10 @@ const books = {
   },
 
   async create (request, response) {
+    let index = 0
+    let pages = []
     const db = database.get()
-    let toto = [{ id: '1', data: 'azeazeaze13123DSQD', name: 'test' }, { id: '2', data: '234GFSD231423', name: 'test2' }]
+    const bucket = database.bucket()
 
     if (typeof request.file === 'undefined') {
       return response.status(422).json({
@@ -80,7 +83,18 @@ const books = {
         })
       }
 
-      await handler(request.file.path, '.uploads/')
+      await handler(request.file.path, '.uploads/tmp')
+      const items = await utils.readdirAsync('.uploads/tmp')
+      for (let item of items) {
+        const data = await require('fs')
+          .createReadStream(path.join('.uploads/tmp', item))
+          .pipe(bucket.openUploadStream(item))
+        pages.push({
+          id: index++,
+          name: data.filename,
+          fileId: data.id
+        })
+      }
 
       await db.collection('books').insertOne({
         name: request.file.originalname,
@@ -89,8 +103,8 @@ const books = {
         encoding: request.file.encoding,
         mimetype: request.file.mimetype,
         size: request.file.size,
-        pagesNumber: 68,
-        content: toto
+        pagesNumber: index,
+        content: pages
       })
 
       return response.status(201).json({

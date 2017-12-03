@@ -16,6 +16,7 @@ module.exports = {
     return new Promise((resolve, reject) => {
       const Unrar = require('node-unrar')
       const rar = new Unrar(target)
+      require('mkdirp')(destination)
       rar.extract(destination, null, (error, result) => {
         if (error) {
           reject(error)
@@ -27,8 +28,17 @@ module.exports = {
   },
 
   unzip (target, destination) {
-    console.log(target)
-    console.log(destination)
+    return new Promise((resolve, reject) => {
+      const unzip = require('cross-unzip')
+      require('mkdirp')(destination)
+      unzip(target, destination, (error, result) => {
+        if (error) {
+          reject(error)
+        } else {
+          resolve(result)
+        }
+      })
+    })
   },
 
   archiveHandler (extension) {
@@ -39,6 +49,18 @@ module.exports = {
     } else {
       return new Error('Extension file invalid: Unable to unpack file')
     }
+  },
+
+  readFileAsync (file) {
+    return new Promise((resolve, reject) => {
+      require('fs').readFile(file, (error, result) => {
+        if (error) {
+          reject(error)
+        } else {
+          resolve(result)
+        }
+      })
+    })
   },
 
   readdirAsync (path) {
@@ -91,6 +113,15 @@ module.exports = {
       }
     } catch (err) {
       console.log(err)
+    }
+  },
+
+  async encodeBase64 (file) {
+    try {
+      const data = await this.readFileAsync(file)
+      return Buffer.from(data).toString('base64')
+    } catch (err) {
+      return err
     }
   }
 }

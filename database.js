@@ -1,11 +1,14 @@
-const MongoClient = require('mongodb').MongoClient
+const mongodb = require('mongodb')
+const MongoClient = mongodb.MongoClient
 
 let _db
+let _bucket
 
 const database = {
   connect (callback) {
     MongoClient.connect('mongodb://localhost:27017/homecomix-db', (err, db) => {
       _db = db
+      _bucket = new mongodb.GridFSBucket(db)
       return callback(err)
     })
   },
@@ -76,7 +79,7 @@ const database = {
       { content: [
         { id: { $type: 'string' } },
         { name: { $type: 'string' } },
-        { data: { $type: 'string' } }
+        { fileId: { $type: 'string' } }
       ]
       }
     ]
@@ -100,6 +103,10 @@ const database = {
 
   get () {
     return _db
+  },
+
+  bucket () {
+    return _bucket
   },
 
   close () {
