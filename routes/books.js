@@ -1,5 +1,5 @@
 const path = require('path')
-const extension = require('path').extname
+const extension = path.extname
 const utils = require('../utils.js')
 const database = require('../database.js')
 
@@ -12,6 +12,14 @@ const books = {
       const books = await db.collection('books').find({
         userId: request.params.uid
       }).toArray()
+
+      books.forEach(item => {
+        delete item.hashname
+        delete item.userId
+        delete item.encoding
+        delete item.mimetype
+        delete item.content
+      })
 
       return response.status(200).json({
         status: 200,
@@ -30,20 +38,95 @@ const books = {
     }
   },
 
-  getOne (request, response) {
-    return response.status(200).json({
-      status: 200,
-      success: true,
-      message: `GET one book with id: ${request.params.id}`
-    })
+  async getOne (request, response) {
+    const db = database.get()
+    const ObjectId = require('mongodb').ObjectId
+
+    try {
+      const book = await db.collection('books').findOne(
+        {
+          _id: ObjectId(request.params.id),
+          userId: request.params.uid
+        })
+
+      if (book) {
+        delete book.hashname
+        delete book.userId
+        delete book.encoding
+        delete book.mimetype
+        delete book.content
+
+        return response.status(200).json({
+          status: 200,
+          success: true,
+          message: `GET page of book with id: ${request.params.id}`,
+          book: book
+        })
+      }
+
+      return response.status(204).json({
+        status: 204,
+        success: false,
+        message: 'Ressource not found'
+      })
+    } catch (err) {
+      console.log(err)
+      database.close()
+      return response.status(500).json({
+        status: 500,
+        success: false,
+        message: 'Internal server error'
+      })
+    }
   },
 
-  getPage (request, response) {
-    return response.status(200).json({
-      status: 200,
-      success: true,
-      message: `GET page of book with id: ${request.params.id} page number: ${request.params.pid}`
-    })
+  async getPage (request, response) {
+    const db = database.get()
+    const bucket = database.bucket()
+    const ObjectId = require('mongodb').ObjectId
+
+    try {
+      const book = await db.collection('books').findOne(
+        {
+          _id: ObjectId(request.params.id),
+          userId: request.params.uid
+        })
+
+      if (book) {
+        console.log(book)
+        console.log(bucket)
+
+        if (parseInt(request.params.pid) > (book.pagesNumber - 1)) {
+          return response.status(204).json({
+            status: 204,
+            success: false,
+            message: 'Ressource not found'
+          })
+        }
+
+        // TODO retrieve request file and encodeBase64 content
+
+        return response.status(200).json({
+          status: 200,
+          success: true,
+          message: `GET page of book with id: ${request.params.id} page number: ${request.params.pid}`
+        })
+      }
+
+      return response.status(204).json({
+        status: 204,
+        success: false,
+        message: 'Ressource not found'
+      })
+    } catch (err) {
+      console.log(err)
+      database.close()
+      return response.status(500).json({
+        status: 500,
+        success: false,
+        message: 'Internal server error'
+      })
+    }
   },
 
   async create (request, response) {
@@ -89,6 +172,7 @@ const books = {
         const data = await require('fs')
           .createReadStream(path.join('.uploads/tmp', item))
           .pipe(bucket.openUploadStream(item))
+        console.log(data)
         pages.push({
           id: index++,
           name: data.filename,
