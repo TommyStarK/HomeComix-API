@@ -63,6 +63,18 @@ module.exports = {
     })
   },
 
+  writeFileAsync (file, content) {
+    return new Promise((resolve, reject) => {
+      require('fs').writeFile(file, content, (error, result) => {
+        if (error) {
+          reject(error)
+        } else {
+          resolve(result)
+        }
+      })
+    })
+  },
+
   readdirAsync (path) {
     return new Promise((resolve, reject) => {
       require('fs').readdir(path, (error, result) => {

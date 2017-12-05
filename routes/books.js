@@ -1,3 +1,4 @@
+const fs = require('fs')
 const path = require('path')
 const extension = path.extname
 const utils = require('../utils.js')
@@ -93,9 +94,6 @@ const books = {
         })
 
       if (book) {
-        console.log(book)
-        console.log(bucket)
-
         if (parseInt(request.params.pid) > (book.pagesNumber - 1)) {
           return response.status(204).json({
             status: 204,
@@ -104,12 +102,25 @@ const books = {
           })
         }
 
-        // TODO retrieve request file and encodeBase64 content
+        const file = book.content[request.params.pid]
+        await require('mkdirp')('.uploads/tmp')
+        await bucket.find({ _id: ObjectId(file.fileId) })
+        await utils.writeFileAsync(path.join('.uploads/tmp', file.name), '')
+        await bucket.openDownloadStreamByName(file.name)
+          .pipe(fs.createWriteStream(path.join('.uploads/tmp', file.name)))
+        const items = await utils.readdirAsync('.uploads/tmp')
+        // TODO update the following line
+        const p = await utils.encodeBase64(path.join('.uploads/tmp', items[0]))
+
+        if (p instanceof Error) {
+          throw (p)
+        }
 
         return response.status(200).json({
           status: 200,
           success: true,
-          message: `GET page of book with id: ${request.params.id} page number: ${request.params.pid}`
+          message: `GET page of book with id: ${request.params.id} page number: ${request.params.pid}`,
+          page: p
         })
       }
 
@@ -169,8 +180,7 @@ const books = {
       await handler(request.file.path, '.uploads/tmp')
       const items = await utils.readdirAsync('.uploads/tmp')
       for (let item of items) {
-        const data = await require('fs')
-          .createReadStream(path.join('.uploads/tmp', item))
+        const data = await fs.createReadStream(path.join('.uploads/tmp', item))
           .pipe(bucket.openUploadStream(item))
         console.log(data)
         pages.push({
