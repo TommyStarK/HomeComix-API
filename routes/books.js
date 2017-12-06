@@ -2,6 +2,7 @@ const fs = require('fs')
 const path = require('path')
 const extension = path.extname
 const utils = require('../utils.js')
+const mkdirp = require('async-mkdirp')
 const database = require('../database.js')
 
 const books = {
@@ -13,6 +14,14 @@ const books = {
       const books = await db.collection('books').find({
         userId: request.params.uid
       }).toArray()
+
+      if (!books) {
+        return response.status(204).json({
+          status: 204,
+          success: false,
+          message: 'Ressource not found'
+        })
+      }
 
       books.forEach(item => {
         delete item.hashname
@@ -50,25 +59,25 @@ const books = {
           userId: request.params.uid
         })
 
-      if (book) {
-        delete book.hashname
-        delete book.userId
-        delete book.encoding
-        delete book.mimetype
-        delete book.content
-
-        return response.status(200).json({
-          status: 200,
-          success: true,
-          message: `GET page of book with id: ${request.params.id}`,
-          book: book
+      if (!book) {
+        return response.status(204).json({
+          status: 204,
+          success: false,
+          message: 'Ressource not found'
         })
       }
 
-      return response.status(204).json({
-        status: 204,
-        success: false,
-        message: 'Ressource not found'
+      delete book.hashname
+      delete book.userId
+      delete book.encoding
+      delete book.mimetype
+      delete book.content
+
+      return response.status(200).json({
+        status: 200,
+        success: true,
+        message: `GET page of book with id: ${request.params.id}`,
+        book: book
       })
     } catch (err) {
       console.log(err)
@@ -85,6 +94,7 @@ const books = {
     const db = database.get()
     const bucket = database.bucket()
     const ObjectId = require('mongodb').ObjectId
+    const dir = path.join('.uploads', 'tmp')
 
     try {
       const book = await db.collection('books').findOne(
@@ -93,42 +103,34 @@ const books = {
           userId: request.params.uid
         })
 
-      if (book) {
-        if (parseInt(request.params.pid) > (book.pagesNumber - 1)) {
-          return response.status(204).json({
-            status: 204,
-            success: false,
-            message: 'Ressource not found'
-          })
-        }
-
-        const file = book.content[request.params.pid]
-        await require('mkdirp')('.uploads/tmp')
-        await bucket.find({ _id: ObjectId(file.fileId) })
-        await utils.writeFileAsync(path.join('.uploads/tmp', file.name), '')
-        await bucket.openDownloadStreamByName(file.name)
-          .pipe(fs.createWriteStream(path.join('.uploads/tmp', file.name)))
-        const items = await utils.readdirAsync('.uploads/tmp')
-        // TODO update the following line
-        const p = await utils.encodeBase64(path.join('.uploads/tmp', items[0]))
-
-        if (p instanceof Error) {
-          throw (p)
-        }
-
-        return response.status(200).json({
-          status: 200,
-          success: true,
-          message: `GET page of book with id: ${request.params.id} page number: ${request.params.pid}`,
-          page: p
+      if (!book || (parseInt(request.params.pid) > (book.pagesNumber - 1))) {
+        return response.status(204).json({
+          status: 204,
+          success: false,
+          message: 'Ressource not found'
         })
       }
 
-      return response.status(204).json({
-        status: 204,
-        success: false,
-        message: 'Ressource not found'
-      })
+      await mkdirp(dir)
+      const file = book.content[request.params.pid]
+      await bucket.find({ _id: ObjectId(file.fileId) })
+      await utils.writeFileAsync(path.join(dir, file.name), '')
+      await bucket.openDownloadStreamByName(file.name)
+        .pipe(fs.createWriteStream(path.join(dir, file.name)))
+        .on('finish', function () {
+          utils.readdirAsync(dir)
+            .then((items) => utils.encodeBase64(path.join(dir, items[0])))
+            .then((p) => {
+                response.status(200).json({
+                  status: 200,
+                  success: true,
+                  message: `GET book: ${request.params.id} page: ${request.params.pid}`,
+                  page: p
+                })
+              })
+            .then(() => utils.removeContentDirectory('.uploads/'))
+            .catch((err) => console.log(err))
+        })
     } catch (err) {
       console.log(err)
       database.close()
@@ -213,8 +215,6 @@ const books = {
         success: false,
         message: 'Internal server error'
       })
-    } finally {
-      await utils.removeContentDirectory('.uploads/')
     }
   },
 

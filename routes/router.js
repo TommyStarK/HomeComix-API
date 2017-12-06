@@ -15,8 +15,10 @@ const illustrators = require('./illustrators.js')
 
 // Frist path handled
 router.get('/api.homecomix', (request, response) => {
-  response.status(200).json(
-      {status: 200, success: true, message: 'Welcome to the HomeComix-API'})
+  response.status(200).json({
+    status: 200,
+    success: true,
+    message: 'Welcome to the HomeComix-API'})
 })
 
 router.get('/api.homecomix/:uid/authors', authors.getAll)

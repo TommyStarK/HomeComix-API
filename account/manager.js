@@ -18,8 +18,10 @@ const account = {
     }
 
     if (utils.validateEmail(request.body.email) === false) {
-      return response.status(400).json(
-          {status: 400, success: false, message: 'Invalid email'})
+      return response.status(400).json({
+        status: 400,
+        success: false,
+        message: 'Invalid email'})
     }
 
     try {
@@ -56,8 +58,10 @@ const account = {
     } catch (err) {
       console.log(err)
       database.close()
-      return response.status(500).json(
-          {status: 500, success: false, message: 'Internal server error'})
+      return response.status(500).json({
+        status: 500,
+        success: false,
+        message: 'Internal server error'})
     }
   },
 
@@ -89,15 +93,19 @@ const account = {
           userId: doc._id,
           token: newToken
         })
-      } else {
-        return response.status(401).json(
-            {status: 401, success: false, message: 'Wrong credentials'})
       }
+
+      return response.status(401).json({
+        status: 401,
+        success: false,
+        message: 'Wrong credentials'})
     } catch (err) {
       console.log(err)
       database.close()
-      return response.status(500).json(
-          {status: 500, success: false, message: 'Internal server error'})
+      return response.status(500).json({
+        status: 500,
+        success: false,
+        message: 'Internal server error'})
     }
   },
 
@@ -128,13 +136,17 @@ const account = {
         })
       }
 
-      return response.status(401).json(
-          {status: 401, success: false, message: 'Wrong credentials'})
+      return response.status(401).json({
+        status: 401,
+        success: false,
+        message: 'Wrong credentials'})
     } catch (err) {
       console.log(err)
       database.close()
-      return response.status(500).json(
-          {status: 500, success: false, message: 'Internal server error'})
+      return response.status(500).json({
+        status: 500,
+        success: false,
+        message: 'Internal server error'})
     }
   }
 
