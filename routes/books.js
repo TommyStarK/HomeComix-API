@@ -182,7 +182,6 @@ const books = {
       for (let item of items) {
         const data = await fs.createReadStream(path.join('.uploads/tmp', item))
           .pipe(bucket.openUploadStream(item))
-        console.log(data)
         pages.push({
           id: index++,
           name: data.filename,
