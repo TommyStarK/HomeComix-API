@@ -21,6 +21,8 @@ module.exports = (request, response, next) => {
 
       request.decoded = decoded
       try {
+
+        // TODO: decoded.userId
         db.collection('users')
           .findOne({ _id: new mongo.ObjectID(request.params.uid) })
           .then(doc => {
@@ -29,6 +31,7 @@ module.exports = (request, response, next) => {
                 {status: 401, success: false, message: 'Nonexistent account'})
             }
 
+            // TODO: REMOVE THIS SECTION
             if (doc._id.toString() !== decoded.userId ||
               request.params.uid !== doc._id.toString() ||
               request.params.uid !== decoded.userId) {

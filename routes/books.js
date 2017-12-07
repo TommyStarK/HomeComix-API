@@ -11,6 +11,13 @@ const books = {
     const db = database.get()
 
     try {
+      // TODO: request.decoded.userId
+      // TODO: Use mongo projection as 2n param in find
+      // ,{
+      //  name: 1,
+      //  size: 1,
+      //  pagesNumber: 1
+      // }
       const books = await db.collection('books').find({
         userId: request.params.uid
       }).toArray()
@@ -23,6 +30,7 @@ const books = {
         })
       }
 
+      // TODO: Remove this section
       books.forEach(item => {
         delete item.hashname
         delete item.userId
@@ -53,6 +61,13 @@ const books = {
     const ObjectId = require('mongodb').ObjectId
 
     try {
+      // TODO: request.decoded.userId
+      // TODO: Use mongo projection as 2n param in findOne
+      // ,{
+      //  name: 1,
+      //  size: 1,
+      //  pagesNumber: 1
+      // }
       const book = await db.collection('books').findOne(
         {
           _id: ObjectId(request.params.id),
@@ -67,6 +82,7 @@ const books = {
         })
       }
 
+      // TODO: Remove this section
       delete book.hashname
       delete book.userId
       delete book.encoding
@@ -97,6 +113,7 @@ const books = {
     const dir = path.join('.uploads', 'tmp')
 
     try {
+      // TODO: request.decoded.userId
       const book = await db.collection('books').findOne(
         {
           _id: ObjectId(request.params.id),
@@ -163,6 +180,7 @@ const books = {
         throw (handler)
       }
 
+      // TODO: request.decoded.userId
       const doc = await db.collection('books').findOne(
         {
           $and: [
@@ -191,6 +209,7 @@ const books = {
         })
       }
 
+      // TODO: request.decoded.userId
       await db.collection('books').insertOne({
         name: request.file.originalname,
         hashname: request.file.filename,

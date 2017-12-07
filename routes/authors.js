@@ -6,6 +6,7 @@ const authors = {
     const db = database.get()
 
     try {
+      // TODO: request.decoded.userId
       const docs = await db.collection('authors').find({
         userId: request.params.uid
       }).toArray()
