@@ -7,27 +7,25 @@ let _bucket
 
 const database = {
   connect (callback) {
-    let url;
-    if (config.mongo.auth){
-      url = 'mongodb://'+
-        config.mongo.username+
-        ':'+config.mongo.username+
-        '@'+config.mongo.uri+
-        ':'+config.mongo.port+
-        '/'+config.mongo.database;
+    let url = 'mongodb://'
+
+    if (config.mongo.auth) {
+      url += config.mongo.username +
+        ':' + config.mongo.username +
+        '@' + config.mongo.uri +
+        ':' + config.mongo.port +
+        '/' + config.mongo.database
+    } else {
+      url += config.mongo.uri +
+      ':' + config.mongo.port +
+      '/' + config.mongo.database
     }
-    else{
-      url = 'mongodb://'+
-      config.mongo.uri+
-      ':'+config.mongo.port+
-      '/'+config.mongo.database
-    }
+
     MongoClient.connect(url, (err, db) => {
-        _db = db
-        _bucket = new mongodb.GridFSBucket(db)
-        return callback(err)
-      }
-    )
+      _db = db
+      _bucket = new mongodb.GridFSBucket(db)
+      return callback(err)
+    })
   },
 
   async init () {

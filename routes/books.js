@@ -234,6 +234,8 @@ const books = {
         success: false,
         message: 'Internal server error'
       })
+    } finally {
+      await utils.removeContentDirectory('.uploads/')
     }
   },
 
