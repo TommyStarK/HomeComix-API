@@ -1,4 +1,5 @@
 const mongodb = require('mongodb')
+const config = require('./config.js')
 const MongoClient = mongodb.MongoClient
 
 let _db
@@ -6,7 +7,21 @@ let _bucket
 
 const database = {
   connect (callback) {
-    MongoClient.connect('mongodb://localhost:27017/homecomix-db', (err, db) => {
+    let url = 'mongodb://'
+
+    if (config.mongo.auth) {
+      url += config.mongo.username +
+        ':' + config.mongo.username +
+        '@' + config.mongo.uri +
+        ':' + config.mongo.port +
+        '/' + config.mongo.database
+    } else {
+      url += config.mongo.uri +
+      ':' + config.mongo.port +
+      '/' + config.mongo.database
+    }
+
+    MongoClient.connect(url, (err, db) => {
       _db = db
       _bucket = new mongodb.GridFSBucket(db)
       return callback(err)

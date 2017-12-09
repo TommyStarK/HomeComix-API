@@ -6,6 +6,7 @@ const illustrators = {
     const db = database.get()
 
     try {
+      // TODO: request.decoded.userId
       const docs = await db.collection('illustrators').find({
         userId: request.params.uid
       }).toArray()

@@ -26,6 +26,8 @@ app.delete('/api.homecomix/delete', account.delete)
 // Middlewares
 // Ensures that all requests starting with /api.homecomix/:uid/* will be checked
 // for the token
+// TODO: remove :uid from middleware init
+// app.all('/api.homecomix/*', [require('./middleware/token')])
 app.all('/api.homecomix/:uid/*', [require('./middleware/token')])
 
 // Mounts the router as middleware at path "/"

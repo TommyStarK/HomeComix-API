@@ -21,6 +21,8 @@ router.get('/api.homecomix', (request, response) => {
     message: 'Welcome to the HomeComix-API'})
 })
 
+// TODO: remove all :uid from routes
+
 router.get('/api.homecomix/:uid/authors', authors.getAll)
 router.get('/api.homecomix/:uid/author/:id', authors.getOne)
 router.post('/api.homecomix/:uid/author', authors.create)

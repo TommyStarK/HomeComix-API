@@ -6,6 +6,7 @@ const collections = {
     const db = database.get()
 
     try {
+      // TODO: request.decoded.userId
       const docs = await db.collection('collections').find({
         userId: request.params.uid
       }).toArray()
