@@ -22,22 +22,14 @@ module.exports = (request, response, next) => {
       request.decoded = decoded
       try {
         db.collection('users')
-          .findOne({ _id: new mongo.ObjectID(request.params.uid) })
+          .findOne({ _id: new mongo.ObjectID(request.decoded.userId) })
           .then(doc => {
             if (doc === null) {
               return response.status(401).json({
                 status: 401,
                 success: false,
-                message: 'Nonexistent account'})
-            }
-
-            if (doc._id.toString() !== decoded.userId ||
-              request.params.uid !== doc._id.toString() ||
-              request.params.uid !== decoded.userId) {
-              return response.status(400).json({
-                status: 400,
-                success: false,
-                message: 'Bad request'})
+                message: 'Nonexistent account'
+              })
             }
 
             next()
@@ -46,13 +38,15 @@ module.exports = (request, response, next) => {
         return response.status(500).json({
           status: 500,
           success: false,
-          message: 'Internal server error' })
+          message: 'Internal server error'
+        })
       }
     })
   } else {
     return response.status(401).json({
       status: 401,
       success: false,
-      message: 'No token provided'})
+      message: 'No token provided'
+    })
   }
 }

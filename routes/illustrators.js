@@ -6,15 +6,21 @@ const illustrators = {
     const db = database.get()
 
     try {
-      // TODO: request.decoded.userId
       const docs = await db.collection('illustrators').find({
-        userId: request.params.uid
+        userId: request.decoded.userId
       }).toArray()
+
+      if (!docs.length) {
+        return response.status(404).json({
+          status: 404,
+          success: false,
+          message: 'No illustrator found'
+        })
+      }
 
       return response.status(200).json({
         status: 200,
         success: true,
-        message: 'GET all illustrators',
         books: docs
       })
     } catch (err) {
@@ -29,10 +35,11 @@ const illustrators = {
   },
 
   getOne (request, response) {
+    let illustrator
     return response.status(200).json({
       status: 200,
       success: true,
-      message: `GET one illustrator with id: ${request.params.id}`
+      illustrator: illustrator
     })
   },
 
@@ -40,8 +47,7 @@ const illustrators = {
     return response.status(201).json({
       status: 201,
       success: true,
-      message: 'CREATE illustrator',
-      body: request.body
+      message: 'Illustrator created successfully'
     })
   },
 
@@ -49,8 +55,7 @@ const illustrators = {
     return response.status(200).json({
       status: 200,
       success: true,
-      message: `UPDATE illustrator with id: ${request.params.id}`,
-      body: request.body
+      message: 'Illustrator updated successfully'
     })
   },
 
@@ -58,7 +63,7 @@ const illustrators = {
     return response.status(200).json({
       status: 200,
       success: true,
-      message: `DELETE illustrator with id: ${request.params.id}`
+      message: 'Illustrator deleted successfully'
     })
   }
 }

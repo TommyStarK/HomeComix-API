@@ -7,13 +7,20 @@ const authors = {
 
     try {
       const docs = await db.collection('authors').find({
-        userId: request.params.uid
+        userId: request.decoded.userId
       }).toArray()
+
+      if (!docs.length) {
+        return response.status(404).json({
+          status: 404,
+          success: false,
+          message: 'No author found'
+        })
+      }
 
       return response.status(200).json({
         status: 200,
         success: true,
-        message: 'GET all authors',
         books: docs
       })
     } catch (err) {
@@ -28,10 +35,11 @@ const authors = {
   },
 
   getOne (request, response) {
+    let author
     return response.status(200).json({
       status: 200,
       success: true,
-      message: `GET one author with id: ${request.params.id}`
+      author: author
     })
   },
 
@@ -39,8 +47,7 @@ const authors = {
     return response.status(201).json({
       status: 201,
       success: true,
-      message: 'CREATE author',
-      body: request.body
+      message: 'Author created successfully'
     })
   },
 
@@ -48,8 +55,7 @@ const authors = {
     return response.status(200).json({
       status: 200,
       success: true,
-      message: `UPDATE author with id: ${request.params.id}`,
-      body: request.body
+      message: 'Author updated successfully'
     })
   },
 
@@ -57,7 +63,7 @@ const authors = {
     return response.status(200).json({
       status: 200,
       success: true,
-      message: `DELETE author with id: ${request.params.id}`
+      message: 'Author deleted successfully'
     })
   }
 }

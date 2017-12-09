@@ -4,6 +4,7 @@ const extension = path.extname
 const utils = require('../utils.js')
 const mkdirp = require('async-mkdirp')
 const database = require('../database.js')
+const dir = path.join('.', '.uploads', 'tmp')
 
 const books = {
 
@@ -11,38 +12,25 @@ const books = {
     const db = database.get()
 
     try {
-      // TODO: request.decoded.userId
-      // TODO: Use mongo projection as 2n param in find
-      // ,{
-      //  name: 1,
-      //  size: 1,
-      //  pagesNumber: 1
-      // }
       const books = await db.collection('books').find({
-        userId: request.params.uid
+        userId: request.decoded.userId
+      }, {
+        name: 1,
+        size: 1,
+        pagesNumber: 1
       }).toArray()
 
-      if (!books) {
-        return response.status(204).json({
-          status: 204,
+      if (!books.length) {
+        return response.status(404).json({
+          status: 404,
           success: false,
-          message: 'Ressource not found'
+          message: 'No book found'
         })
       }
-
-      // TODO: Remove this section
-      books.forEach(item => {
-        delete item.hashname
-        delete item.userId
-        delete item.encoding
-        delete item.mimetype
-        delete item.content
-      })
 
       return response.status(200).json({
         status: 200,
         success: true,
-        message: 'GET all books',
         books: books
       })
     } catch (err) {
@@ -61,38 +49,27 @@ const books = {
     const ObjectId = require('mongodb').ObjectId
 
     try {
-      // TODO: request.decoded.userId
-      // TODO: Use mongo projection as 2n param in findOne
-      // ,{
-      //  name: 1,
-      //  size: 1,
-      //  pagesNumber: 1
-      // }
       const book = await db.collection('books').findOne(
         {
           _id: ObjectId(request.params.id),
-          userId: request.params.uid
+          userId: request.decoded.userId
+        }, {
+          name: 1,
+          size: 1,
+          pagesNumber: 1
         })
 
       if (!book) {
         return response.status(204).json({
           status: 204,
           success: false,
-          message: 'Ressource not found'
+          message: 'Book not found'
         })
       }
-
-      // TODO: Remove this section
-      delete book.hashname
-      delete book.userId
-      delete book.encoding
-      delete book.mimetype
-      delete book.content
 
       return response.status(200).json({
         status: 200,
         success: true,
-        message: `GET page of book with id: ${request.params.id}`,
         book: book
       })
     } catch (err) {
@@ -110,21 +87,19 @@ const books = {
     const db = database.get()
     const bucket = database.bucket()
     const ObjectId = require('mongodb').ObjectId
-    const dir = path.join('.uploads', 'tmp')
 
     try {
-      // TODO: request.decoded.userId
       const book = await db.collection('books').findOne(
         {
           _id: ObjectId(request.params.id),
-          userId: request.params.uid
+          userId: request.decoded.userId
         })
 
       if (!book || (parseInt(request.params.pid) > (book.pagesNumber - 1))) {
         return response.status(204).json({
           status: 204,
           success: false,
-          message: 'Ressource not found'
+          message: 'Page not found'
         })
       }
 
@@ -141,7 +116,6 @@ const books = {
                 response.status(200).json({
                   status: 200,
                   success: true,
-                  message: `GET book: ${request.params.id} page: ${request.params.pid}`,
                   page: p
                 })
               })
@@ -180,11 +154,10 @@ const books = {
         throw (handler)
       }
 
-      // TODO: request.decoded.userId
       const doc = await db.collection('books').findOne(
         {
           $and: [
-            {userId: request.params.uid},
+            {userId: request.decoded.userId},
             {name: request.file.originalname}
           ]
         })
@@ -197,23 +170,22 @@ const books = {
         })
       }
 
-      await handler(request.file.path, '.uploads/tmp')
-      const items = await utils.readdirAsync('.uploads/tmp')
+      await handler(request.file.path, dir)
+      const items = await utils.readdirAsync(dir)
       for (let item of items) {
-        const data = await fs.createReadStream(path.join('.uploads/tmp', item))
+        const data = await fs.createReadStream(path.join(dir, item))
           .pipe(bucket.openUploadStream(item))
         pages.push({
-          id: index++,
+          id: ++index,
           name: data.filename,
           fileId: data.id
         })
       }
 
-      // TODO: request.decoded.userId
       await db.collection('books').insertOne({
         name: request.file.originalname,
         hashname: request.file.filename,
-        userId: request.params.uid,
+        userId: request.decoded.userId,
         encoding: request.file.encoding,
         mimetype: request.file.mimetype,
         size: request.file.size,
@@ -224,7 +196,7 @@ const books = {
       return response.status(201).json({
         status: 201,
         success: true,
-        message: 'CREATE book success'
+        message: 'Book created successfully'
       })
     } catch (err) {
       console.log(err)
@@ -243,8 +215,7 @@ const books = {
     return response.status(200).json({
       status: 200,
       success: true,
-      message: `UPDATE book with id: ${request.params.id}`,
-      body: request.body
+      message: 'Book updated successfully'
     })
   },
 
@@ -252,7 +223,7 @@ const books = {
     return response.status(200).json({
       status: 200,
       success: true,
-      message: `DELETE book with id: ${request.params.id}`
+      message: 'Book deleted successfully'
     })
   }
 }

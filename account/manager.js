@@ -13,7 +13,7 @@ const account = {
       return response.status(400).json({
         status: 400,
         success: false,
-        message: 'Body missing username/email/password field'
+        message: 'Body missing username/email/password field(s)'
       })
     }
 
@@ -21,7 +21,8 @@ const account = {
       return response.status(400).json({
         status: 400,
         success: false,
-        message: 'Invalid email'})
+        message: 'Invalid email'
+      })
     }
 
     try {
@@ -53,7 +54,7 @@ const account = {
       return response.status(201).json({
         status: 201,
         success: true,
-        message: 'Account registration succeed'
+        message: 'Account registrated successfully'
       })
     } catch (err) {
       console.log(err)
@@ -61,7 +62,8 @@ const account = {
       return response.status(500).json({
         status: 500,
         success: false,
-        message: 'Internal server error'})
+        message: 'Internal server error'
+      })
     }
   },
 
@@ -73,7 +75,7 @@ const account = {
       return response.status(400).json({
         status: 400,
         success: false,
-        message: 'Body missing username/password field'
+        message: 'Body missing username/password field(s)'
       })
     }
 
@@ -90,7 +92,6 @@ const account = {
         return response.status(200).json({
           status: 200,
           success: true,
-          userId: doc._id,
           token: newToken
         })
       }
@@ -98,14 +99,16 @@ const account = {
       return response.status(401).json({
         status: 401,
         success: false,
-        message: 'Wrong credentials'})
+        message: 'Wrong credentials'
+      })
     } catch (err) {
       console.log(err)
       database.close()
       return response.status(500).json({
         status: 500,
         success: false,
-        message: 'Internal server error'})
+        message: 'Internal server error'
+      })
     }
   },
 
@@ -117,7 +120,7 @@ const account = {
       return response.status(400).json({
         status: 400,
         success: false,
-        message: 'Body missing username/password field'
+        message: 'Body missing username/password field(s)'
       })
     }
 
@@ -139,14 +142,16 @@ const account = {
       return response.status(401).json({
         status: 401,
         success: false,
-        message: 'Wrong credentials'})
+        message: 'Wrong credentials'
+      })
     } catch (err) {
       console.log(err)
       database.close()
       return response.status(500).json({
         status: 500,
         success: false,
-        message: 'Internal server error'})
+        message: 'Internal server error'
+      })
     }
   }
 

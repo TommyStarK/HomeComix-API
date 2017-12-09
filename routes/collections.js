@@ -6,15 +6,21 @@ const collections = {
     const db = database.get()
 
     try {
-      // TODO: request.decoded.userId
       const docs = await db.collection('collections').find({
-        userId: request.params.uid
+        userId: request.decoded.userId
       }).toArray()
+
+      if (!docs.length) {
+        return response.status(404).json({
+          status: 404,
+          success: false,
+          message: 'No collection found'
+        })
+      }
 
       return response.status(200).json({
         status: 200,
         success: true,
-        message: 'GET all collections',
         books: docs
       })
     } catch (err) {
@@ -29,10 +35,11 @@ const collections = {
   },
 
   getOne (request, response) {
+    let collection
     return response.status(200).json({
       status: 200,
       success: true,
-      message: `GET one collection with id: ${request.params.id}`
+      collection: collection
     })
   },
 
@@ -40,8 +47,7 @@ const collections = {
     return response.status(201).json({
       status: 201,
       success: true,
-      message: 'CREATE collection',
-      body: request.body
+      message: 'Collection created successfully'
     })
   },
 
@@ -49,8 +55,7 @@ const collections = {
     return response.status(200).json({
       status: 200,
       success: true,
-      message: `UPDATE collection with id: ${request.params.id}`,
-      body: request.body
+      message: 'Collection updated successfully'
     })
   },
 
@@ -58,7 +63,7 @@ const collections = {
     return response.status(200).json({
       status: 200,
       success: true,
-      message: `DELETE collection with id: ${request.params.id}`
+      message: 'Collection deleted successfully'
     })
   }
 }
