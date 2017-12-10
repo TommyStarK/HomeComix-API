@@ -22,8 +22,6 @@ router.get('/api.homecomix', (request, response, next) => {
   })
 })
 
-// TODO: remove all :uid from routes
-
 router.get('/api.homecomix/authors', authors.getAll)
 router.get('/api.homecomix/author/:id', authors.getOne)
 router.post('/api.homecomix/author', authors.create)
