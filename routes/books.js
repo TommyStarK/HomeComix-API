@@ -166,7 +166,7 @@ const books = {
       }
 
       await db.collection('books').insertOne({
-        name: request.file.originalname,
+        name: request.file.originalname.slice(0, -4),
         hashname: request.file.filename,
         userId: request.decoded.userId,
         encoding: request.file.encoding,
