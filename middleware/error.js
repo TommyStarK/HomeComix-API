@@ -11,14 +11,13 @@ const error = {
 
   // Middleware to catch unexpected errors
   errorHandler (err, request, response, next) {
+    require('../database.js').close()
     console.log(err.message)
     response.status(500).json({
       status: 500,
       success: false,
-      message: 'Internal server error',
-      error: err.message
+      message: 'Internal server error'
     })
-    require('../database.js').close()
     process.exit(1)
   }
 }
