@@ -39,7 +39,7 @@ module.exports = (request, response, next) => {
       }
     })
   } else {
-    return response.status(400).json({
+    return response.status(401).json({
       status: 401,
       success: false,
       message: 'No token provided'
