@@ -10,16 +10,16 @@ const account = {
     if (request.body.username === undefined ||
         request.body.password === undefined ||
         request.body.email === undefined) {
-      return response.status(400).json({
-        status: 400,
+      return response.status(412).json({
+        status: 412,
         success: false,
         message: 'Body missing username/email/password field(s)'
       })
     }
 
     if (utils.validateEmail(request.body.email) === false) {
-      return response.status(400).json({
-        status: 400,
+      return response.status(412).json({
+        status: 412,
         success: false,
         message: 'Invalid email'
       })
@@ -66,8 +66,8 @@ const account = {
 
     if (request.body.username === undefined ||
         request.body.password === undefined) {
-      return response.status(400).json({
-        status: 400,
+      return response.status(412).json({
+        status: 412,
         success: false,
         message: 'Body missing username/password field(s)'
       })
@@ -105,8 +105,8 @@ const account = {
 
     if (request.body.username === undefined ||
         request.body.password === undefined) {
-      return response.status(400).json({
-        status: 400,
+      return response.status(412).json({
+        status: 412,
         success: false,
         message: 'Body missing username/password field(s)'
       })
