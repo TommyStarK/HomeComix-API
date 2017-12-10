@@ -25,7 +25,7 @@ module.exports = (request, response, next) => {
           .findOne({ _id: new mongo.ObjectID(request.decoded.userId) })
           .then(doc => {
             if (doc === null) {
-              return response.status(401).json({
+              return response.status(403).json({
                 status: 403,
                 success: false,
                 message: 'Forbidden'
