@@ -4,11 +4,12 @@ const extension = path.extname
 const utils = require('../utils.js')
 const mkdirp = require('async-mkdirp')
 const database = require('../database.js')
-const dir = path.join('.', '.uploads', 'tmp')
+const dir = path.join('.', '.uploads')
+const tmp = path.join('.', '.uploads', 'tmp')
 
 const books = {
 
-  async getAll (request, response) {
+  async getAll (request, response, next) {
     const db = database.get()
 
     try {
@@ -34,17 +35,11 @@ const books = {
         books: books
       })
     } catch (err) {
-      console.log(err)
-      database.close()
-      return response.status(500).json({
-        status: 500,
-        success: false,
-        message: 'Internal server error'
-      })
+      next(err)
     }
   },
 
-  async getOne (request, response) {
+  async getOne (request, response, next) {
     const db = database.get()
     const ObjectId = require('mongodb').ObjectId
 
@@ -60,8 +55,8 @@ const books = {
         })
 
       if (!book) {
-        return response.status(204).json({
-          status: 204,
+        return response.status(404).json({
+          status: 404,
           success: false,
           message: 'Book not found'
         })
@@ -73,17 +68,11 @@ const books = {
         book: book
       })
     } catch (err) {
-      console.log(err)
-      database.close()
-      return response.status(500).json({
-        status: 500,
-        success: false,
-        message: 'Internal server error'
-      })
+      next(err)
     }
   },
 
-  async getPage (request, response) {
+  async getPage (request, response, next) {
     const db = database.get()
     const bucket = database.bucket()
     const ObjectId = require('mongodb').ObjectId
@@ -96,22 +85,22 @@ const books = {
         })
 
       if (!book || (parseInt(request.params.pid) > (book.pagesNumber - 1))) {
-        return response.status(204).json({
-          status: 204,
+        return response.status(404).json({
+          status: 404,
           success: false,
           message: 'Page not found'
         })
       }
 
-      await mkdirp(dir)
+      await mkdirp(tmp)
       const file = book.content[request.params.pid]
       await bucket.find({ _id: ObjectId(file.fileId) })
-      await utils.writeFileAsync(path.join(dir, file.name), '')
+      await utils.writeFileAsync(path.join(tmp, file.name), '')
       await bucket.openDownloadStreamByName(file.name)
-        .pipe(fs.createWriteStream(path.join(dir, file.name)))
+        .pipe(fs.createWriteStream(path.join(tmp, file.name)))
         .on('finish', function () {
-          utils.readdirAsync(dir)
-            .then((items) => utils.encodeBase64(path.join(dir, items[0])))
+          utils.readdirAsync(tmp)
+            .then((items) => utils.encodeBase64(path.join(tmp, items[0])))
             .then((p) => {
                 response.status(200).json({
                   status: 200,
@@ -119,21 +108,15 @@ const books = {
                   page: p
                 })
               })
-            .then(() => utils.removeContentDirectory('.uploads/'))
+            .then(() => utils.removeContentDirectory(dir))
             .catch((err) => console.log(err))
         })
     } catch (err) {
-      console.log(err)
-      database.close()
-      return response.status(500).json({
-        status: 500,
-        success: false,
-        message: 'Internal server error'
-      })
+      next(err)
     }
   },
 
-  async create (request, response) {
+  async create (request, response, next) {
     let index = 0
     let pages = []
     const db = database.get()
@@ -170,13 +153,13 @@ const books = {
         })
       }
 
-      await handler(request.file.path, dir)
-      const items = await utils.readdirAsync(dir)
+      await handler(request.file.path, tmp)
+      const items = await utils.readdirAsync(tmp)
       for (let item of items) {
-        const data = await fs.createReadStream(path.join(dir, item))
+        const data = await fs.createReadStream(path.join(tmp, item))
           .pipe(bucket.openUploadStream(item))
         pages.push({
-          id: ++index,
+          id: index++,
           name: data.filename,
           fileId: data.id
         })
@@ -199,19 +182,13 @@ const books = {
         message: 'Book created successfully'
       })
     } catch (err) {
-      console.log(err)
-      database.close()
-      return response.status(500).json({
-        status: 500,
-        success: false,
-        message: 'Internal server error'
-      })
+      next(err)
     } finally {
-      await utils.removeContentDirectory('.uploads/')
+      await utils.removeContentDirectory(dir)
     }
   },
 
-  update (request, response) {
+  update (request, response, next) {
     return response.status(200).json({
       status: 200,
       success: true,
@@ -219,7 +196,7 @@ const books = {
     })
   },
 
-  delete (request, response) {
+  delete (request, response, next) {
     return response.status(200).json({
       status: 200,
       success: true,

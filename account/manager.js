@@ -4,7 +4,7 @@ const database = require('../database.js')
 
 const account = {
 
-  async register (request, response) {
+  async register (request, response, next) {
     const db = database.get()
 
     if (request.body.username === undefined ||
@@ -57,17 +57,11 @@ const account = {
         message: 'Account registrated successfully'
       })
     } catch (err) {
-      console.log(err)
-      database.close()
-      return response.status(500).json({
-        status: 500,
-        success: false,
-        message: 'Internal server error'
-      })
+      next(err)
     }
   },
 
-  async authorize (request, response) {
+  async authorize (request, response, next) {
     const db = database.get()
 
     if (request.body.username === undefined ||
@@ -102,17 +96,11 @@ const account = {
         message: 'Wrong credentials'
       })
     } catch (err) {
-      console.log(err)
-      database.close()
-      return response.status(500).json({
-        status: 500,
-        success: false,
-        message: 'Internal server error'
-      })
+      next(err)
     }
   },
 
-  async delete (request, response) {
+  async delete (request, response, next) {
     const db = database.get()
 
     if (request.body.username === undefined ||
@@ -145,13 +133,7 @@ const account = {
         message: 'Wrong credentials'
       })
     } catch (err) {
-      console.log(err)
-      database.close()
-      return response.status(500).json({
-        status: 500,
-        success: false,
-        message: 'Internal server error'
-      })
+      next(err)
     }
   }
 

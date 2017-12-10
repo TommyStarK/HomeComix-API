@@ -26,24 +26,20 @@ module.exports = (request, response, next) => {
           .then(doc => {
             if (doc === null) {
               return response.status(401).json({
-                status: 401,
+                status: 403,
                 success: false,
-                message: 'Nonexistent account'
+                message: 'Forbidden'
               })
             }
 
             next()
           })
       } catch (err) {
-        return response.status(500).json({
-          status: 500,
-          success: false,
-          message: 'Internal server error'
-        })
+        next(err)
       }
     })
   } else {
-    return response.status(401).json({
+    return response.status(400).json({
       status: 401,
       success: false,
       message: 'No token provided'

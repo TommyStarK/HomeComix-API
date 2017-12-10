@@ -2,7 +2,7 @@ const database = require('../database.js')
 
 const collections = {
 
-  async getAll (request, response) {
+  async getAll (request, response, next) {
     const db = database.get()
 
     try {
@@ -24,17 +24,11 @@ const collections = {
         books: docs
       })
     } catch (err) {
-      console.log(err)
-      database.close()
-      return response.status(500).json({
-        status: 500,
-        success: false,
-        message: 'Internal server error'
-      })
+      next(err)
     }
   },
 
-  getOne (request, response) {
+  getOne (request, response, next) {
     let collection
     return response.status(200).json({
       status: 200,
@@ -43,7 +37,7 @@ const collections = {
     })
   },
 
-  create (request, response) {
+  create (request, response, next) {
     return response.status(201).json({
       status: 201,
       success: true,
@@ -51,7 +45,7 @@ const collections = {
     })
   },
 
-  update (request, response) {
+  update (request, response, next) {
     return response.status(200).json({
       status: 200,
       success: true,
@@ -59,7 +53,7 @@ const collections = {
     })
   },
 
-  delete (request, response) {
+  delete (request, response, next) {
     return response.status(200).json({
       status: 200,
       success: true,

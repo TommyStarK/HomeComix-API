@@ -6,18 +6,20 @@ const error = {
       success: false,
       message: '404 not found'
     })
-
     next()
   },
 
   // Middleware to catch unexpected errors
   errorHandler (err, request, response, next) {
-    return response.status(500).json({
+    console.log(err.message)
+    response.status(500).json({
       status: 500,
       success: false,
       message: 'Internal server error',
       error: err.message
     })
+    require('../database.js').close()
+    process.exit(1)
   }
 }
 

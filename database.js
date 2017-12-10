@@ -6,60 +6,74 @@ let _db
 let _bucket
 
 const database = {
-  connect (callback) {
-    let url = 'mongodb://'
+  connect () {
+    return new Promise((resolve, reject) => {
+      let url = 'mongodb://'
 
-    if (config.mongo.auth) {
-      url += config.mongo.username +
-        ':' + config.mongo.username +
-        '@' + config.mongo.uri +
+      if (config.mongo.auth) {
+        url += config.mongo.username +
+          ':' + config.mongo.username +
+          '@' + config.mongo.uri +
+          ':' + config.mongo.port +
+          '/' + config.mongo.database
+      } else {
+        url += config.mongo.uri +
         ':' + config.mongo.port +
         '/' + config.mongo.database
-    } else {
-      url += config.mongo.uri +
-      ':' + config.mongo.port +
-      '/' + config.mongo.database
-    }
+      }
 
-    MongoClient.connect(url, (err, db) => {
-      _db = db
-      _bucket = new mongodb.GridFSBucket(db)
-      return callback(err)
+      MongoClient.connect(url, (err, db) => {
+        if (err) {
+          reject(err)
+        } else {
+          try {
+            _db = db
+            _bucket = new mongodb.GridFSBucket(db)
+            resolve(db)
+          } catch (err) {
+            reject(err)
+          }
+        }
+      })
     })
   },
 
-  async init () {
-    let map = new Map()
-    const db = database.get()
-    let collectionsToCreate = []
-    const collectionsRequired = [
-      {name: 'users', func: database.initUsers},
-      {name: 'books', func: database.initBooks},
-      {name: 'authors', func: database.initAuthors},
-      {name: 'collections', func: database.initCollections},
-      {name: 'illustrators', func: database.initIllustrators}
-    ]
+  init () {
+    return new Promise((resolve, reject) => {
+      let map = new Map()
+      const db = database.get()
+      const collectionsRequired = [
+        {name: 'users', func: database.initUsers},
+        {name: 'books', func: database.initBooks},
+        {name: 'authors', func: database.initAuthors},
+        {name: 'collections', func: database.initCollections},
+        {name: 'illustrators', func: database.initIllustrators}
+      ]
 
-    try {
-      let collections = await db.listCollections().toArray()
-      collections = collections.map((item) => {
-        return item.name
-      })
-      collections.forEach(map.set.bind(map))
-      collectionsRequired.forEach(target => {
-        if (!map.has(target.name)) {
-          collectionsToCreate.push(target.func)
+      db.listCollections().toArray((error, collections) => {
+        if (error) {
+          reject(error)
+        } else {
+          try {
+            collections = collections.map((item) => {
+              return item.name
+            })
+
+            collections.forEach(map.set.bind(map))
+
+            collectionsRequired.forEach(target => {
+              if (!map.has(target.name)) {
+                target.func()
+              }
+            })
+
+            resolve(collections)
+          } catch (err) {
+            reject(err)
+          }
         }
       })
-      collectionsToCreate.forEach(func => {
-        func()
-      })
-      return true
-    } catch (err) {
-      console.log(err)
-      database.close()
-      return false
-    }
+    })
   },
 
   initUsers () {

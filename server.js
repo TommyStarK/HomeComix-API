@@ -31,19 +31,27 @@ app.all('/api.homecomix/*', [require('./middleware/token')])
 // Mounts the router as middleware at path "/"
 app.use('/', router)
 
-// Starts the server
-app.listen(port, () => {
-  console.log(`${homecomixApi}Server listening on port ${port} [${success}]`)
-  database.connect(err => {
+database.connect()
+  .then(() => {
+    console.log(`${homecomixApi}Connection to the database [${success}]`)
+    database.init()
+      .then(() => {
+        app.listen(port, () => {
+          console.log(`${homecomixApi}Listening on port ${port} [${success}]`)
+          console.log(`${homecomixApi}HomeComix starting service [${success}]`)
+        })
+      })
+      .catch(err => {
+        console.log(`${homecomixApi}HomeComix starting service [${failure}]`)
+        console.log(err.message)
+        database.close()
+        process.exit(1)
+      })
+  })
+  .catch(err => {
     if (err) {
       console.log(`${homecomixApi}Connection to the database [${failure}]`)
-      throw (err)
-    } else {
-      console.log(`${homecomixApi}Connection to the database [${success}]`)
-      database.init().then(result => {
-        const res = result === true ? success : failure
-        console.log(`${homecomixApi}HomeComix starting service [${res}]`)
-      })
+      console.log(err.message)
+      process.exit(1)
     }
   })
-})
