@@ -24,20 +24,43 @@ const illustrators = {
       return response.status(200).json({
         status: 200,
         success: true,
-        books: docs
+        illustrators: docs
       })
     } catch (err) {
       next(err)
     }
   },
 
-  getOne (request, response, next) {
-    let illustrator
-    return response.status(200).json({
-      status: 200,
-      success: true,
-      illustrator: illustrator
-    })
+  async getOne (request, response, next) {
+    const db = database.get()
+    const ObjectId = require('mongodb').ObjectId
+
+    try {
+      const illustrator = await db.collection('illustrators').findOne(
+        {
+          _id: ObjectId(request.params.id),
+          userId: request.decoded.userId
+        }, {
+          name: 1,
+          books: 1
+        })
+
+      if (!illustrator) {
+        return response.status(404).json({
+          status: 404,
+          success: false,
+          message: 'Illustrator not found'
+        })
+      }
+
+      return response.status(200).json({
+        status: 200,
+        success: true,
+        illustrator: illustrator
+      })
+    } catch (err) {
+      next(err)
+    }
   },
 
   async create (request, response, next) {

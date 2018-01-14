@@ -24,20 +24,43 @@ const authors = {
       return response.status(200).json({
         status: 200,
         success: true,
-        books: docs
+        authors: docs
       })
     } catch (err) {
       next(err)
     }
   },
 
-  getOne (request, response, next) {
-    let author
-    return response.status(200).json({
-      status: 200,
-      success: true,
-      author: author
-    })
+  async getOne (request, response, next) {
+    const db = database.get()
+    const ObjectId = require('mongodb').ObjectId
+
+    try {
+      const author = await db.collection('authors').findOne(
+        {
+          _id: ObjectId(request.params.id),
+          userId: request.decoded.userId
+        }, {
+          name: 1,
+          books: 1
+        })
+
+      if (!author) {
+        return response.status(404).json({
+          status: 404,
+          success: false,
+          message: 'Author not found'
+        })
+      }
+
+      return response.status(200).json({
+        status: 200,
+        success: true,
+        author: author
+      })
+    } catch (err) {
+      next(err)
+    }
   },
 
   async create (request, response, next) {

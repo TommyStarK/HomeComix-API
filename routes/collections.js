@@ -24,20 +24,43 @@ const collections = {
       return response.status(200).json({
         status: 200,
         success: true,
-        books: docs
+        collections: docs
       })
     } catch (err) {
       next(err)
     }
   },
 
-  getOne (request, response, next) {
-    let collection
-    return response.status(200).json({
-      status: 200,
-      success: true,
-      collection: collection
-    })
+  async getOne (request, response, next) {
+    const db = database.get()
+    const ObjectId = require('mongodb').ObjectId
+
+    try {
+      const collection = await db.collection('collections').findOne(
+        {
+          _id: ObjectId(request.params.id),
+          userId: request.decoded.userId
+        }, {
+          name: 1,
+          books: 1
+        })
+
+      if (!collection) {
+        return response.status(404).json({
+          status: 404,
+          success: false,
+          message: 'Collection not found'
+        })
+      }
+
+      return response.status(200).json({
+        status: 200,
+        success: true,
+        collection: collection
+      })
+    } catch (err) {
+      next(err)
+    }
   },
 
   async create (request, response, next) {
