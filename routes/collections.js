@@ -78,10 +78,8 @@ const collections = {
     try {
       const doc = await db.collection('collections').findOne(
         {
-          $and: [
-            {userId: request.decoded.userId},
-            {name: request.body.name}
-          ]
+          name: request.body.name,
+          userId: request.decoded.userId
         })
 
       if (doc) {
@@ -108,12 +106,44 @@ const collections = {
     }
   },
 
-  update (request, response, next) {
-    return response.status(200).json({
-      status: 200,
-      success: true,
-      message: 'Collection updated successfully'
-    })
+  async update (request, response, next) {
+    const db = database.get()
+    const ObjectId = require('mongodb').ObjectId
+
+    try {
+      const collection = await db.collection('collections').findOne(
+        {
+          _id: ObjectId(request.params.id),
+          userId: request.decoded.userId
+        })
+
+      if (!collection) {
+        return response.status(404).json({
+          status: 404,
+          success: false,
+          message: 'Collection not found'
+        })
+      }
+
+      await db.collection('collections').update(
+        {
+          _id: ObjectId(request.params.id),
+          userId: request.decoded.userId
+        },
+        {
+          $push: {
+            books: {id: request.body.name}
+          }
+        })
+
+      return response.status(200).json({
+        status: 200,
+        success: true,
+        message: 'Collection updated successfully'
+      })
+    } catch (err) {
+      next(err)
+    }
   },
 
   delete (request, response, next) {

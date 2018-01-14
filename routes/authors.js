@@ -78,10 +78,8 @@ const authors = {
     try {
       const doc = await db.collection('authors').findOne(
         {
-          $and: [
-            {userId: request.decoded.userId},
-            {name: request.body.name}
-          ]
+          name: request.body.name,
+          userId: request.decoded.userId
         })
 
       if (doc) {
@@ -108,12 +106,44 @@ const authors = {
     }
   },
 
-  update (request, response, next) {
-    return response.status(200).json({
-      status: 200,
-      success: true,
-      message: 'Author updated successfully'
-    })
+  async update (request, response, next) {
+    const db = database.get()
+    const ObjectId = require('mongodb').ObjectId
+
+    try {
+      const author = await db.collection('authors').findOne(
+        {
+          _id: ObjectId(request.params.id),
+          userId: request.decoded.userId
+        })
+
+      if (!author) {
+        return response.status(404).json({
+          status: 404,
+          success: false,
+          message: 'Author not found'
+        })
+      }
+
+      await db.collection('authors').update(
+        {
+          _id: ObjectId(request.params.id),
+          userId: request.decoded.userId
+        },
+        {
+          $push: {
+            books: {id: request.body.name}
+          }
+        })
+
+      return response.status(200).json({
+        status: 200,
+        success: true,
+        message: 'Author updated successfully'
+      })
+    } catch (err) {
+      next(err)
+    }
   },
 
   delete (request, response, next) {

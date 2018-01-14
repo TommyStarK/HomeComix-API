@@ -127,10 +127,8 @@ const books = {
 
     const result = await db.collection(collection).findOne(
       {
-        $and: [
-          {userId: userId},
-          {name: target}
-        ]
+        name: target,
+        userId: userId
       })
 
     if (!result) {
@@ -144,10 +142,8 @@ const books = {
 
     await db.collection(collection).update(
       {
-        $and: [
-          {userId: userId},
-          {name: target}
-        ]
+        name: target,
+        userId: userId
       },
       {
         $push: {
@@ -179,10 +175,8 @@ const books = {
 
       const doc = await db.collection('books').findOne(
         {
-          $and: [
-            {userId: request.decoded.userId},
-            {name: request.file.originalname}
-          ]
+          name: request.file.originalname,
+          userId: request.decoded.userId
         })
 
       if (doc) {
