@@ -122,6 +122,40 @@ const books = {
     }
   },
 
+  async creationHandler (collection, target, userId, bookId) {
+    const db = database.get()
+
+    const result = await db.collection(collection).findOne(
+      {
+        $and: [
+          {userId: userId},
+          {name: target}
+        ]
+      })
+
+    if (!result) {
+      let books = []
+      await db.collection(collection).insertOne({
+        name: target,
+        userId: userId,
+        books: books
+      })
+    }
+
+    await db.collection(collection).update(
+      {
+        $and: [
+          {userId: userId},
+          {name: target}
+        ]
+      },
+      {
+        $push: {
+          books: {id: bookId}
+        }
+      })
+  },
+
   async create (request, response, next) {
     let index = 0
     let pages = []
@@ -171,12 +205,12 @@ const books = {
         })
       }
 
-      await db.collection('books').insertOne({
+      const result = await db.collection('books').insertOne({
         name: request.file.originalname.slice(0, -4),
         hashname: request.file.filename,
-        author: 'No author informed',
-        collection: 'No collection informed',
-        illustrator: 'No illustrator informed',
+        author: request.body.author === undefined ? '' : request.body.author,
+        collection: request.body.collection === undefined ? '' : request.body.collection,
+        illustrator: request.body.illustrator === undefined ? '' : request.body.illustrator,
         userId: request.decoded.userId,
         encoding: request.file.encoding,
         mimetype: request.file.mimetype,
@@ -184,6 +218,10 @@ const books = {
         pagesNumber: index,
         content: pages
       })
+
+      for (let item in request.body) {
+        await books.creationHandler(item + 's', request.body[item], request.decoded.userId, result.insertedId)
+      }
 
       return response.status(201).json({
         status: 201,
