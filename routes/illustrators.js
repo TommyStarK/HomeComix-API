@@ -8,6 +8,9 @@ const illustrators = {
     try {
       const docs = await db.collection('illustrators').find({
         userId: request.decoded.userId
+      }, {
+        name: 1,
+        books: 1
       }).toArray()
 
       if (!docs.length) {
@@ -37,12 +40,49 @@ const illustrators = {
     })
   },
 
-  create (request, response, next) {
-    return response.status(201).json({
-      status: 201,
-      success: true,
-      message: 'Illustrator created successfully'
-    })
+  async create (request, response, next) {
+    let books = []
+    const db = database.get()
+
+    if (typeof request.body.name === 'undefined') {
+      return response.status(422).json({
+        status: 422,
+        success: false,
+        message: 'Unprocessable entity'
+      })
+    }
+
+    try {
+      const doc = await db.collection('illustrators').findOne(
+        {
+          $and: [
+            {userId: request.decoded.userId},
+            {name: request.body.name}
+          ]
+        })
+
+      if (doc) {
+        return response.status(409).json({
+          status: 409,
+          success: false,
+          message: `Conflict: ${request.body.name} already exists`
+        })
+      }
+
+      await db.collection('illustrators').insertOne({
+        name: request.body.name,
+        userId: request.decoded.userId,
+        books: books
+      })
+
+      return response.status(201).json({
+        status: 201,
+        success: true,
+        message: 'Illustrator created successfully'
+      })
+    } catch (err) {
+      next(err)
+    }
   },
 
   update (request, response, next) {

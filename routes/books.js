@@ -17,6 +17,9 @@ const books = {
         userId: request.decoded.userId
       }, {
         name: 1,
+        author: 1,
+        collection: 1,
+        illustrator: 1,
         size: 1,
         pagesNumber: 1
       }).toArray()
@@ -51,6 +54,9 @@ const books = {
         }, {
           name: 1,
           size: 1,
+          author: 1,
+          collection: 1,
+          illustrator: 1,
           pagesNumber: 1
         })
 
@@ -168,6 +174,9 @@ const books = {
       await db.collection('books').insertOne({
         name: request.file.originalname.slice(0, -4),
         hashname: request.file.filename,
+        author: 'No author informed',
+        collection: 'No collection informed',
+        illustrator: 'No illustrator informed',
         userId: request.decoded.userId,
         encoding: request.file.encoding,
         mimetype: request.file.mimetype,

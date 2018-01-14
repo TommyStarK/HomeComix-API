@@ -99,6 +99,9 @@ const database = {
     { $and:
     [
       { name: { $type: 'string' } },
+      { author: { $type: 'string' } },
+      { collection: { $type: 'string' } },
+      { illustrator: { $type: 'string' } },
       { hashname: { $type: 'string' } },
       { userId: { $type: 'string' } },
       { encoding: { $type: 'string' } },
@@ -119,15 +122,60 @@ const database = {
   },
 
   initAuthors () {
-    console.log('init authors collection')
+    const db = database.get()
+
+    db.createCollection('authors', { validator:
+      { $and:
+      [
+        { name: { $type: 'string' } },
+        { userId: { $type: 'string' } },
+        { books: [
+          { id: { $type: 'string' } }
+        ]
+        }
+      ]
+      },
+        validationLevel: 'strict',
+        validationAction: 'warn'
+    })
   },
 
   initCollections () {
-    console.log('init collections collection')
+    const db = database.get()
+
+    db.createCollection('collections', { validator:
+      { $and:
+      [
+        { name: { $type: 'string' } },
+        { userId: { $type: 'string' } },
+        { books: [
+          { id: { $type: 'string' } }
+        ]
+        }
+      ]
+      },
+        validationLevel: 'strict',
+        validationAction: 'warn'
+    })
   },
 
   initIllustrators () {
-    console.log('init illustrators collection')
+    const db = database.get()
+
+    db.createCollection('illustrators', { validator:
+      { $and:
+      [
+        { name: { $type: 'string' } },
+        { userId: { $type: 'string' } },
+        { books: [
+          { id: { $type: 'string' } }
+        ]
+        }
+      ]
+      },
+        validationLevel: 'strict',
+        validationAction: 'warn'
+    })
   },
 
   get () {
