@@ -146,12 +146,33 @@ const collections = {
     }
   },
 
-  delete (request, response, next) {
-    return response.status(200).json({
-      status: 200,
-      success: true,
-      message: 'Collection deleted successfully'
-    })
+  async delete (request, response, next) {
+    const db = database.get()
+    const ObjectId = require('mongodb').ObjectId
+
+    try {
+      const doc = await db.collection('collections').findOneAndDelete(
+        {
+          _id: ObjectId(request.params.id),
+          userId: request.decoded.userId
+        })
+
+      if (doc && doc.value !== null) {
+        return response.status(200).json({
+          status: 200,
+          success: true,
+          message: 'Collection deleted successfully'
+        })
+      }
+
+      return response.status(500).json({
+        status: 500,
+        success: false,
+        message: 'An unexpected error occured during the deletion of the collection'
+      })
+    } catch (err) {
+      next(err)
+    }
   }
 }
 
