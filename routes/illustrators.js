@@ -151,6 +151,15 @@ const illustrators = {
     const ObjectId = require('mongodb').ObjectId
 
     try {
+      const target = await db.collection('illustrators').findOne(
+        {
+          _id: ObjectId(request.params.id),
+          userId: request.decoded.userId
+        },
+        {
+          name: 1
+        })
+
       const doc = await db.collection('illustrators').findOneAndDelete(
         {
           _id: ObjectId(request.params.id),
@@ -158,6 +167,17 @@ const illustrators = {
         })
 
       if (doc && doc.value !== null) {
+        await db.collection('books').update(
+          {
+            illustrator: target.name,
+            userId: request.decoded.userId
+          },
+          {
+            $set: {
+              collection: ''
+            }
+          })
+
         return response.status(200).json({
           status: 200,
           success: true,

@@ -151,6 +151,15 @@ const collections = {
     const ObjectId = require('mongodb').ObjectId
 
     try {
+      const target = await db.collection('collections').findOne(
+        {
+          _id: ObjectId(request.params.id),
+          userId: request.decoded.userId
+        },
+        {
+          name: 1
+        })
+
       const doc = await db.collection('collections').findOneAndDelete(
         {
           _id: ObjectId(request.params.id),
@@ -158,6 +167,17 @@ const collections = {
         })
 
       if (doc && doc.value !== null) {
+        await db.collection('books').update(
+          {
+            collection: target.name,
+            userId: request.decoded.userId
+          },
+          {
+            $set: {
+              collection: ''
+            }
+          })
+
         return response.status(200).json({
           status: 200,
           success: true,
