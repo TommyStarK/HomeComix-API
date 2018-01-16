@@ -166,6 +166,16 @@ const books = {
       })
     }
 
+    for (let item in request.body) {
+      if (!['author', 'collection', 'illustrator'].includes(item)) {
+        return response.status(412).json({
+          status: 412,
+          success: false,
+          message: `Body: field ${item} not supported`
+        })
+      }
+    }
+
     try {
       const handler = utils.archiveHandler(extension(request.file.originalname))
 
@@ -213,6 +223,7 @@ const books = {
         content: pages
       })
 
+
       for (let item in request.body) {
         await books.creationHandler(item + 's', request.body[item], request.decoded.userId, result.insertedId)
       }
@@ -237,12 +248,75 @@ const books = {
     })
   },
 
-  delete (request, response, next) {
-    return response.status(200).json({
-      status: 200,
-      success: true,
-      message: 'Book deleted successfully'
-    })
+  async delete (request, response, next) {
+    const db = database.get()
+    const ObjectId = require('mongodb').ObjectId
+
+    try {
+      const target = await db.collection('books').findOne(
+        {
+          _id: ObjectId(request.params.id),
+          userId: request.decoded.userId
+        },
+        {
+          author: 1,
+          collection: 1,
+          illustrator: 1
+        })
+
+      if (!target) {
+        return response.status(404).json({
+          status: 404,
+          success: false,
+          message: 'Book not found'
+        })
+      }
+
+      const doc = await db.collection('books').findOneAndDelete(
+        {
+          _id: ObjectId(request.params.id),
+          userId: request.decoded.userId
+        })
+
+      if (doc && doc.value !== null) {
+        let supported = {
+          'author': target.author,
+          'collection': target.collection,
+          'illustrator': target.illustrator
+        }
+
+        for (let item in supported) {
+          if (supported[item].length) {
+            await db.collection(item + 's').update(
+              {
+                name: supported[item],
+                userId: request.decoded.userId
+              },
+              {
+                $pull: {
+                  books: {
+                    id: target._id
+                  }
+                }
+              })
+          }
+        }
+
+        return response.status(200).json({
+          status: 200,
+          success: true,
+          message: 'Book deleted successfully'
+        })
+      }
+
+      return response.status(500).json({
+        status: 500,
+        success: false,
+        message: 'An unexpected error occured during the deletion of the book'
+      })
+    } catch (err) {
+      next(err)
+    }
   }
 }
 
