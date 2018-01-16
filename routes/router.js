@@ -4,8 +4,8 @@ const upload = multer({ dest: '.uploads/' })
 const router = new express.Router()
 
 // Routes handlers
-const authors = require('./authors.js')
 const books = require('./books.js')
+const authors = require('./authors.js')
 const collections = require('./collections.js')
 const illustrators = require('./illustrators.js')
 

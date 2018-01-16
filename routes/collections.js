@@ -68,10 +68,10 @@ const collections = {
     const db = database.get()
 
     if (typeof request.body.name === 'undefined') {
-      return response.status(422).json({
-        status: 422,
+      return response.status(412).json({
+        status: 412,
         success: false,
-        message: 'Unprocessable entity'
+        message: 'Body missing name field'
       })
     }
 
@@ -111,10 +111,21 @@ const collections = {
     const ObjectId = require('mongodb').ObjectId
 
     try {
+      if (request.body.id === undefined) {
+        return response.status(412).json({
+          status: 412,
+          success: false,
+          message: 'Body missing id field'
+        })
+      }
+
       const collection = await db.collection('collections').findOne(
         {
           _id: ObjectId(request.params.id),
           userId: request.decoded.userId
+        },
+        {
+          name: 1
         })
 
       if (!collection) {
@@ -132,7 +143,18 @@ const collections = {
         },
         {
           $push: {
-            books: {id: request.body.name}
+            books: {id: request.body.id}
+          }
+        })
+
+      await db.collection('books').update(
+        {
+          _id: ObjectId(request.body.id),
+          userId: request.decoded.userId
+        },
+        {
+          $set:{
+            collection: collection.name
           }
         })
 
@@ -160,6 +182,14 @@ const collections = {
           name: 1
         })
 
+        if (!target) {
+          return response.status(404).json({
+            status: 404,
+            success: false,
+            message: 'Collection not found'
+          })
+        }
+
       const doc = await db.collection('collections').findOneAndDelete(
         {
           _id: ObjectId(request.params.id),
@@ -176,6 +206,9 @@ const collections = {
             $set: {
               collection: ''
             }
+          },
+          {
+            multi: true
           })
 
         return response.status(200).json({

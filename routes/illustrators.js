@@ -68,10 +68,10 @@ const illustrators = {
     const db = database.get()
 
     if (typeof request.body.name === 'undefined') {
-      return response.status(422).json({
-        status: 422,
+      return response.status(412).json({
+        status: 412,
         success: false,
-        message: 'Unprocessable entity'
+        message: 'Body missing name field'
       })
     }
 
@@ -110,11 +110,24 @@ const illustrators = {
     const db = database.get()
     const ObjectId = require('mongodb').ObjectId
 
+    console.log('DEBUG')
+
     try {
+      if (request.body.id === undefined) {
+        return response.status(412).json({
+          status: 412,
+          success: false,
+          message: 'Body missing id field'
+        })
+      }
+
       const illustrator = await db.collection('illustrators').findOne(
         {
           _id: ObjectId(request.params.id),
           userId: request.decoded.userId
+        },
+        {
+          name: 1
         })
 
       if (!illustrator) {
@@ -125,14 +138,25 @@ const illustrators = {
         })
       }
 
-      await db.collection('illustrators').update(
+      await db.collection('illustrator').update(
         {
           _id: ObjectId(request.params.id),
           userId: request.decoded.userId
         },
         {
           $push: {
-            books: {id: request.body.name}
+            books: {id: request.body.id}
+          }
+        })
+
+      await db.collection('books').update(
+        {
+          _id: ObjectId(request.body.id),
+          userId: request.decoded.userId
+        },
+        {
+          $set:{
+            illustrator: illustrator.name
           }
         })
 
@@ -160,6 +184,14 @@ const illustrators = {
           name: 1
         })
 
+      if (!target) {
+        return response.status(404).json({
+          status: 404,
+          success: false,
+          message: 'Illustrator not found'
+        })
+      }
+
       const doc = await db.collection('illustrators').findOneAndDelete(
         {
           _id: ObjectId(request.params.id),
@@ -174,8 +206,11 @@ const illustrators = {
           },
           {
             $set: {
-              collection: ''
+              illustrator: ''
             }
+          },
+          {
+            multi: true
           })
 
         return response.status(200).json({
