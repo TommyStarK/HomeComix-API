@@ -6,14 +6,14 @@ const illustrators = {
     const db = database.get()
 
     try {
-      const docs = await db.collection('illustrators').find({
+      const illustrators = await db.collection('illustrators').find({
         userId: request.decoded.userId
       }, {
         name: 1,
         books: 1
       }).toArray()
 
-      if (!docs.length) {
+      if (!illustrators.length) {
         return response.status(404).json({
           status: 404,
           success: false,
@@ -24,7 +24,7 @@ const illustrators = {
       return response.status(200).json({
         status: 200,
         success: true,
-        illustrators: docs
+        illustrators: illustrators
       })
     } catch (err) {
       next(err)
@@ -64,7 +64,6 @@ const illustrators = {
   },
 
   async create (request, response, next) {
-    let books = []
     const db = database.get()
 
     if (typeof request.body.name === 'undefined') {
@@ -93,7 +92,7 @@ const illustrators = {
       await db.collection('illustrators').insertOne({
         name: request.body.name,
         userId: request.decoded.userId,
-        books: books
+        books: []
       })
 
       return response.status(201).json({

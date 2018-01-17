@@ -132,11 +132,10 @@ const books = {
       })
 
     if (!result) {
-      let books = []
       await db.collection(collection).insertOne({
         name: target,
         userId: userId,
-        books: books
+        books: []
       })
     }
 
@@ -185,7 +184,7 @@ const books = {
 
       const doc = await db.collection('books').findOne(
         {
-          name: request.file.originalname,
+          name: request.file.originalname.slice(0, -4),
           userId: request.decoded.userId
         })
 
@@ -193,7 +192,7 @@ const books = {
         return response.status(409).json({
           status: 409,
           success: false,
-          message: `Conflict: ${request.file.originalname} already exists`
+          message: `Conflict: ${request.file.originalname.slice(0, -4)} already exists`
         })
       }
 
@@ -225,7 +224,12 @@ const books = {
 
 
       for (let item in request.body) {
-        await books.creationHandler(item + 's', request.body[item], request.decoded.userId, result.insertedId)
+        await books.creationHandler(
+          item + 's',
+          request.body[item],
+          request.decoded.userId,
+          result.insertedId
+        )
       }
 
       return response.status(201).json({
@@ -240,12 +244,67 @@ const books = {
     }
   },
 
-  update (request, response, next) {
-    return response.status(200).json({
-      status: 200,
-      success: true,
-      message: 'Book updated successfully'
-    })
+  async update (request, response, next) {
+    let set = {}
+    const db = database.get()
+    const ObjectId = require('mongodb').ObjectId
+
+    for (let item in request.body) {
+      if (!['author', 'collection', 'illustrator'].includes(item)) {
+        return response.status(412).json({
+          status: 412,
+          success: false,
+          message: `Body: field ${item} not supported`
+        })
+      }
+      set[item] = request.body[item]
+    }
+
+    try {
+
+      const book = await db.collection('books').findOne(
+        {
+          _id: ObjectId(request.params.id),
+          userId: request.decoded.userId
+        },
+        {
+          name: 1
+        })
+
+      if (!book) {
+        return response.status(404).json({
+          status: 404,
+          success: false,
+          message: 'Book not found'
+        })
+      }
+
+      await db.collection('books').update(
+        {
+          _id: ObjectId(request.params.id),
+          userId: request.decoded.userId
+        },
+        {
+          $set: set
+        })
+
+      for (let item in request.body) {
+        await books.creationHandler(
+          item + 's',
+          request.body[item],
+          request.decoded.userId,
+          request.params.id
+        )
+      }
+
+      return response.status(200).json({
+        status: 200,
+        success: true,
+        message: 'Book updated successfully'
+      })
+    } catch (err) {
+      next(err)
+    }
   },
 
   async delete (request, response, next) {

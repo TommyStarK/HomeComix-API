@@ -6,14 +6,14 @@ const collections = {
     const db = database.get()
 
     try {
-      const docs = await db.collection('collections').find({
+      const collections = await db.collection('collections').find({
         userId: request.decoded.userId
       }, {
         name: 1,
         books: 1
       }).toArray()
 
-      if (!docs.length) {
+      if (!collections.length) {
         return response.status(404).json({
           status: 404,
           success: false,
@@ -24,7 +24,7 @@ const collections = {
       return response.status(200).json({
         status: 200,
         success: true,
-        collections: docs
+        collections: collections
       })
     } catch (err) {
       next(err)
@@ -64,7 +64,6 @@ const collections = {
   },
 
   async create (request, response, next) {
-    let books = []
     const db = database.get()
 
     if (typeof request.body.name === 'undefined') {
@@ -93,7 +92,7 @@ const collections = {
       await db.collection('collections').insertOne({
         name: request.body.name,
         userId: request.decoded.userId,
-        books: books
+        books: []
       })
 
       return response.status(201).json({

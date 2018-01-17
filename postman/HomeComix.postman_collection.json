@@ -1,0 +1,784 @@
+{
+	"info": {
+		"name": "HomeComix",
+		"_postman_id": "688ee790-152f-496e-2288-e1237dff4baa",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"description": "",
+			"item": [
+				{
+					"name": "{{base_url}}/register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\": \"tommy\",\n\t\"password\": \"P@ssw0rd\",\n\t\"email\": \"thomasmilox@hotmail.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"register"
+							]
+						},
+						"description": "Register an account (example)"
+					},
+					"response": []
+				},
+				{
+					"name": "{{base_url}}/authorize",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\": \"tommy\",\n\t\"password\": \"P@ssw0rd\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/authorize",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"authorize"
+							]
+						},
+						"description": "Authorize an user and retrieve a valid token for being able to fully use the API"
+					},
+					"response": []
+				},
+				{
+					"name": "{{base_url}}/delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\": \"tommy\",\n\t\"password\": \"P@ssw0rd\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/delete",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"delete"
+							]
+						},
+						"description": "DELETE account"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "authors",
+			"description": "",
+			"item": [
+				{
+					"name": "{{base_url}}/authors",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{base_url}}/authors",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"authors"
+							]
+						},
+						"description": "GET all authors"
+					},
+					"response": []
+				},
+				{
+					"name": "{{base_url}}/author",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Akira toriyama\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/author",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"author"
+							]
+						},
+						"description": "POST a new author"
+					},
+					"response": []
+				},
+				{
+					"name": "{{base_url}}/author/{{author_id}}",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{base_url}}/author/{{author_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"author",
+								"{{author_id}}"
+							]
+						},
+						"description": "GET a specific author by id"
+					},
+					"response": []
+				},
+				{
+					"name": "{{base_url}}/author/{{author_id}}",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{base_url}}/author/{{author_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"author",
+								"{{author_id}}"
+							]
+						},
+						"description": "DELETE the specified author by ud"
+					},
+					"response": []
+				},
+				{
+					"name": "{{base_url}}/author/{{author_id}}",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id\": \"5a5e5372b38bf703da1d1e70\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/author/{{author_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"author",
+								"{{author_id}}"
+							]
+						},
+						"description": "UPDATE a specific author by id"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "illustrators",
+			"description": "",
+			"item": [
+				{
+					"name": "{{base_url}}/illustrators",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{base_url}}/illustrators",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"illustrators"
+							]
+						},
+						"description": "GET all illustrators"
+					},
+					"response": []
+				},
+				{
+					"name": "{{base_url}}/illustrator",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Tadayoshi Yamauro\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/illustrator",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"illustrator"
+							]
+						},
+						"description": "POST a new illustrator"
+					},
+					"response": []
+				},
+				{
+					"name": "{{base_url}}/illustrator/{{illustrator_id}}",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{base_url}}/illustrator/{{illustrator_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"illustrator",
+								"{{illustrator_id}}"
+							]
+						},
+						"description": "GET a specific illustrator by id"
+					},
+					"response": []
+				},
+				{
+					"name": "{{base_url}}/illustrator/{{illustrator_id}}",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{base_url}}/illustrator/{{illustrator_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"illustrator",
+								"{{illustrator_id}}"
+							]
+						},
+						"description": "DELETE the specified illustrator by id"
+					},
+					"response": []
+				},
+				{
+					"name": "{{base_url}}/illustrator/{{illustrator_id}}",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization\b",
+								"value": "{{token}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{base_url}}/illustrator/{{illustrator_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"illustrator",
+								"{{illustrator_id}}"
+							]
+						},
+						"description": "UPDATE a specific illustrator by id"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "collections",
+			"description": "",
+			"item": [
+				{
+					"name": "{{base_url}}/collections",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "",
+									"description": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/collections",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"collections"
+							]
+						},
+						"description": "GET all collections"
+					},
+					"response": []
+				},
+				{
+					"name": "{{base_url}}/collection",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Batman\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/collection",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"collection"
+							]
+						},
+						"description": "POST a new collection"
+					},
+					"response": []
+				},
+				{
+					"name": "{{base_url}}/collection/{{collection_id}}",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{base_url}}/collection/{{collection_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"collection",
+								"{{collection_id}}"
+							]
+						},
+						"description": "Get a specific collection by id"
+					},
+					"response": []
+				},
+				{
+					"name": "{{base_url}}/collection/{{collection_id}}",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id\": \"5a5e509fb3fa40034e5bf34c\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/collection/{{collection_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"collection",
+								"{{collection_id}}"
+							]
+						},
+						"description": "UPDATE a collection"
+					},
+					"response": []
+				},
+				{
+					"name": "{{base_url}}/collection/{{collection_id}}",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{base_url}}/collection/{{collection_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"collection",
+								"{{collection_id}}"
+							]
+						},
+						"description": "DELETE the specified collection by id"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "books",
+			"description": "",
+			"item": [
+				{
+					"name": "{{base_url}}/book",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"value": "",
+									"description": "",
+									"type": "file"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/book",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"book"
+							]
+						},
+						"description": "POST a new book for an authenticated user"
+					},
+					"response": []
+				},
+				{
+					"name": "{{base_url}}/books",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{base_url}}/books",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"books"
+							]
+						},
+						"description": "GET all books for an authenticated user"
+					},
+					"response": []
+				},
+				{
+					"name": "{{base_url}}/book/{{book_id}}",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{base_url}}/book/{{book_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"book",
+								"{{book_id}}"
+							]
+						},
+						"description": "GET a specific book (book_id) for an authenticated user"
+					},
+					"response": []
+				},
+				{
+					"name": "{{base_url}}/book/{{book_id}}/page/{{page_id}}",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{base_url}}/book/{{book_id}}/page/{{page_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"book",
+								"{{book_id}}",
+								"page",
+								"{{page_id}}"
+							]
+						},
+						"description": "GET the specified page (page_id) of the specified book (book_id) encoded to base64"
+					},
+					"response": []
+				},
+				{
+					"name": "{{base_url}}/book/{{book_id}}",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{base_url}}/book/{{book_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"book",
+								"{{book_id}}"
+							]
+						},
+						"description": "DELETE a specific book by id"
+					},
+					"response": []
+				},
+				{
+					"name": "{{base_url}}/book/{{book_id}}",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"author\": \"toto\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/book/{{book_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"book",
+								"{{book_id}}"
+							]
+						},
+						"description": "UPDATE a specific book by id"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "errors",
+			"description": "",
+			"item": [
+				{
+					"name": "{{base_url}}/toto",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "{{base_url}}/toto",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"toto"
+							]
+						},
+						"description": "404 test"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "{{base_url}}",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{base_url}}",
+					"host": [
+						"{{base_url}}"
+					]
+				},
+				"description": "Base url test"
+			},
+			"response": []
+		}
+	]
+}
