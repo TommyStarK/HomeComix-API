@@ -1,14 +1,12 @@
 {
 	"info": {
 		"name": "HomeComix",
-		"_postman_id": "688ee790-152f-496e-2288-e1237dff4baa",
-		"description": "",
+		"_postman_id": "28cc5d43-1773-eb3a-3bf8-e6e02acdd3d8",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
 			"name": "auth",
-			"description": "",
 			"item": [
 				{
 					"name": "{{base_url}}/register",
@@ -39,6 +37,21 @@
 				},
 				{
 					"name": "{{base_url}}/authorize",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "a98284ab-526f-4b07-b605-83576c6cf366",
+								"type": "text/javascript",
+								"exec": [
+									"var data = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"token\", data.token)",
+									"",
+									"tests[\"Successful POST request\"] = responseCode.code === 200;"
+								]
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -95,7 +108,6 @@
 		},
 		{
 			"name": "authors",
-			"description": "",
 			"item": [
 				{
 					"name": "{{base_url}}/authors",
@@ -111,7 +123,10 @@
 								"value": "{{token}}"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{base_url}}/authors",
 							"host": [
@@ -170,7 +185,10 @@
 								"value": "{{token}}"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{base_url}}/author/{{author_id}}",
 							"host": [
@@ -195,7 +213,10 @@
 								"value": "{{token}}"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{base_url}}/author/{{author_id}}",
 							"host": [
@@ -246,7 +267,6 @@
 		},
 		{
 			"name": "illustrators",
-			"description": "",
 			"item": [
 				{
 					"name": "{{base_url}}/illustrators",
@@ -262,7 +282,10 @@
 								"value": "{{token}}"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{base_url}}/illustrators",
 							"host": [
@@ -321,7 +344,10 @@
 								"value": "{{token}}"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{base_url}}/illustrator/{{illustrator_id}}",
 							"host": [
@@ -346,7 +372,10 @@
 								"value": "{{token}}"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{base_url}}/illustrator/{{illustrator_id}}",
 							"host": [
@@ -371,7 +400,10 @@
 								"value": "{{token}}"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{base_url}}/illustrator/{{illustrator_id}}",
 							"host": [
@@ -390,7 +422,6 @@
 		},
 		{
 			"name": "collections",
-			"description": "",
 			"item": [
 				{
 					"name": "{{base_url}}/collections",
@@ -412,7 +443,6 @@
 								{
 									"key": "name",
 									"value": "",
-									"description": "",
 									"type": "text"
 								}
 							]
@@ -475,7 +505,10 @@
 								"value": "{{token}}"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{base_url}}/collection/{{collection_id}}",
 							"host": [
@@ -532,7 +565,10 @@
 								"value": "{{token}}"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{base_url}}/collection/{{collection_id}}",
 							"host": [
@@ -551,7 +587,6 @@
 		},
 		{
 			"name": "books",
-			"description": "",
 			"item": [
 				{
 					"name": "{{base_url}}/book",
@@ -569,7 +604,6 @@
 								{
 									"key": "file",
 									"value": "",
-									"description": "",
 									"type": "file"
 								}
 							]
@@ -601,7 +635,10 @@
 								"value": "{{token}}"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{base_url}}/books",
 							"host": [
@@ -629,7 +666,10 @@
 								"value": "{{token}}"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{base_url}}/book/{{book_id}}",
 							"host": [
@@ -658,7 +698,10 @@
 								"value": "{{token}}"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{base_url}}/book/{{book_id}}/page/{{page_id}}",
 							"host": [
@@ -685,7 +728,10 @@
 								"value": "{{token}}"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{base_url}}/book/{{book_id}}",
 							"host": [
@@ -736,7 +782,6 @@
 		},
 		{
 			"name": "errors",
-			"description": "",
 			"item": [
 				{
 					"name": "{{base_url}}/toto",
@@ -748,7 +793,10 @@
 								"value": "{{token}}"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "{{base_url}}/toto",
 							"host": [
@@ -769,7 +817,10 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"body": {},
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
 				"url": {
 					"raw": "{{base_url}}",
 					"host": [
