@@ -2,6 +2,7 @@
 	"info": {
 		"name": "HomeComix",
 		"_postman_id": "28cc5d43-1773-eb3a-3bf8-e6e02acdd3d8",
+		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -396,13 +397,17 @@
 						"method": "PUT",
 						"header": [
 							{
-								"key": "Authorization\b",
+								"key": "Authorization",
 								"value": "{{token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": ""
+							"raw": "{\n\t\"id\": \"5a5e5372b38bf703da1d1e70\",\n\t\"name\": \"toto yolo\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/illustrator/{{illustrator_id}}",
@@ -414,7 +419,7 @@
 								"{{illustrator_id}}"
 							]
 						},
-						"description": "UPDATE a specific illustrator by id"
+						"description": "UPDATE a specific author by id"
 					},
 					"response": []
 				}
