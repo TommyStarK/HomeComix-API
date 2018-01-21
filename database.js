@@ -98,10 +98,24 @@ const database = {
     db.createCollection('books', { validator:
     { $and:
     [
-      { name: { $type: 'string' } },
-      { author: { $type: 'string' } },
-      { collection: { $type: 'string' } },
-      { illustrator: { $type: 'string' } },
+      { title: { $type: 'string' } },
+      { year: { $type: 'string' } },
+      { description: { $type: 'string' } },
+      { authors: [
+        { id: { $type: 'string' } },
+        { name: { $type: 'string' } }
+      ]
+      },
+      { collections: [
+        { id: { $type: 'string' } },
+        { name: { $type: 'string' } }
+      ]
+      },
+      { illustrators: [
+        { id: { $type: 'string' } },
+        { name: { $type: 'string' } }
+      ]
+      },
       { hashname: { $type: 'string' } },
       { userId: { $type: 'string' } },
       { encoding: { $type: 'string' } },
