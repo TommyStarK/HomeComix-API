@@ -9,10 +9,6 @@ const tmp = path.join('.', '.uploads', 'tmp')
 
 const books = {
 
-  //
-  //
-  //
-  //
   async getAll (request, response, next) {
     const db = database.get()
 
@@ -50,10 +46,6 @@ const books = {
     }
   },
 
-  //
-  //
-  //
-  //
   async getOne (request, response, next) {
     const db = database.get()
     const ObjectId = require('mongodb').ObjectId
@@ -92,10 +84,6 @@ const books = {
     }
   },
 
-  //
-  //
-  //
-  //
   async getPage (request, response, next) {
     const db = database.get()
     const bucket = database.bucket()
@@ -140,10 +128,6 @@ const books = {
     }
   },
 
-  //
-  //
-  //
-  //
   bodyHandler (request) {
     let body = {
       title: '',
@@ -196,10 +180,6 @@ const books = {
     return body
   },
 
-  //
-  //
-  //
-  //
   async createHandler (name, data, userId, body) {
     const db = database.get()
 
@@ -223,10 +203,6 @@ const books = {
     }
   },
 
-  //
-  //
-  //
-  //
   async updateHandler (target, data, userId, bookId) {
     const db = database.get()
     const ObjectId = require('mongodb').ObjectId
@@ -240,16 +216,12 @@ const books = {
         },
         {
           $addToSet: {
-            books: {id: bookId}
+            books: {id: ObjectId(bookId)}
           }
         })
     }
   },
 
-  //
-  //
-  //
-  //
   async create (request, response, next) {
     const db = database.get()
     const bucket = database.bucket()
@@ -318,23 +290,6 @@ const books = {
         }
       }
 
-      // console.log(body)
-      console.log({
-        title: request.file.originalname.slice(0, -4),
-        year: body.year,
-        description: body.description,
-        authors: body.authors,
-        collections: body.collections,
-        illustrators: body.illustrators,
-        hashname: request.file.filename,
-        userId: request.decoded.userId,
-        encoding: request.file.encoding,
-        mimetype: request.file.mimetype,
-        size: request.file.size,
-        pagesNumber: index,
-        content: pages
-      })
-
       const result = await db.collection('books').insertOne({
         title: request.file.originalname.slice(0, -4),
         year: body.year,
@@ -351,18 +306,16 @@ const books = {
         content: pages
       })
 
-      // console.log(result)
-
-      // for (let elem in body) {
-      //   if (Array.isArray(body[elem])) {
-      //     await books.updateHandler(
-      //       elem,
-      //       body[elem],
-      //       request.decoded.userId,
-      //       result.insertedId
-      //     )
-      //   }
-      // }
+      for (let elem in body) {
+        if (Array.isArray(body[elem])) {
+          await books.updateHandler(
+            elem,
+            body[elem],
+            request.decoded.userId,
+            result.insertedId
+          )
+        }
+      }
 
       return response.status(201).json({
         status: 201,
@@ -376,10 +329,6 @@ const books = {
     }
   },
 
-  //
-  //
-  //
-  //
   async update (request, response, next) {
     const db = database.get()
     const ObjectId = require('mongodb').ObjectId
@@ -399,14 +348,6 @@ const books = {
         {
           _id: ObjectId(request.params.id),
           userId: request.decoded.userId
-        },
-        {
-          title: 1,
-          year: 1,
-          description: 1,
-          authors: 1,
-          collections: 1,
-          illustrators: 1
         })
 
       if (!book) {
@@ -432,7 +373,11 @@ const books = {
         }
       }
 
-      await db.collection('books').updateOne(book,
+      await db.collection('books').updateOne(
+        {
+          _id: ObjectId(request.params.id),
+          userId: request.decoded.userId
+        },
         {
           $set: body
         })
@@ -458,16 +403,12 @@ const books = {
     }
   },
 
-  //
-  //
-  //
-  //
   async delete (request, response, next) {
     const db = database.get()
     const ObjectId = require('mongodb').ObjectId
 
     try {
-      const target = await db.collection('books').findOne(
+      const book = await db.collection('books').findOne(
         {
           _id: ObjectId(request.params.id),
           userId: request.decoded.userId
@@ -478,7 +419,7 @@ const books = {
           illustrators: 1
         })
 
-      if (!target) {
+      if (!book) {
         return response.status(404).json({
           status: 404,
           success: false,
@@ -486,22 +427,17 @@ const books = {
         })
       }
 
-      const doc = await db.collection('books').findOneAndDelete(target)
+      const doc = await db.collection('books').findOneAndDelete(book)
 
       if (doc && doc.value !== null) {
         let collections = {
-          'authors': target.authors,
-          'collections': target.collections,
-          'illustrators': target.illustrators
+          'authors': book.authors,
+          'collections': book.collections,
+          'illustrators': book.illustrators
         }
-
-        console.log(collections)
 
         for (let elem in collections) {
           for (let item in collections[elem]) {
-            console.log(elem)
-            console.log(collections[elem][item])
-            console.log(target._id)
             await db.collection(elem).updateOne(
               {
                 _id: ObjectId(collections[elem][item].id),
@@ -511,7 +447,7 @@ const books = {
               {
                 $pull: {
                   books: {
-                    id: target._id
+                    id: book._id
                   }
                 }
               })
