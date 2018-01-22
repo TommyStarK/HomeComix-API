@@ -318,6 +318,8 @@ const books = {
         }
       }
 
+      console.log(body)
+
       const result = await db.collection('books').insertOne({
         title: request.file.originalname.slice(0, -4),
         year: body.year,
@@ -333,6 +335,8 @@ const books = {
         pagesNumber: index,
         content: pages
       })
+
+      console.log(result)
 
       for (let elem in body) {
         if (Array.isArray(body[elem])) {
