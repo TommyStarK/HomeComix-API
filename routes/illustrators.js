@@ -10,6 +10,7 @@ const illustrators = {
         userId: request.decoded.userId
       }, {
         name: 1,
+        description: 1,
         books: 1
       }).toArray()
 
@@ -42,6 +43,7 @@ const illustrators = {
           userId: request.decoded.userId
         }, {
           name: 1,
+          description: 1,
           books: 1
         })
 

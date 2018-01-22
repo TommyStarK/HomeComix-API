@@ -193,6 +193,7 @@ const books = {
       if (!result) {
         result = await db.collection(name).insertOne({
           name: data[item].name,
+          description: '',
           userId: userId,
           books: []
         })
