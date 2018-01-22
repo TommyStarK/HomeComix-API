@@ -318,7 +318,22 @@ const books = {
         }
       }
 
-      console.log(body)
+      // console.log(body)
+      console.log({
+        title: request.file.originalname.slice(0, -4),
+        year: body.year,
+        description: body.description,
+        authors: body.authors,
+        collections: body.collections,
+        illustrators: body.illustrators,
+        hashname: request.file.filename,
+        userId: request.decoded.userId,
+        encoding: request.file.encoding,
+        mimetype: request.file.mimetype,
+        size: request.file.size,
+        pagesNumber: index,
+        content: pages
+      })
 
       const result = await db.collection('books').insertOne({
         title: request.file.originalname.slice(0, -4),
@@ -336,18 +351,18 @@ const books = {
         content: pages
       })
 
-      console.log(result)
+      // console.log(result)
 
-      for (let elem in body) {
-        if (Array.isArray(body[elem])) {
-          await books.updateHandler(
-            elem,
-            body[elem],
-            request.decoded.userId,
-            result.insertedId
-          )
-        }
-      }
+      // for (let elem in body) {
+      //   if (Array.isArray(body[elem])) {
+      //     await books.updateHandler(
+      //       elem,
+      //       body[elem],
+      //       request.decoded.userId,
+      //       result.insertedId
+      //     )
+      //   }
+      // }
 
       return response.status(201).json({
         status: 201,

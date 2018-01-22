@@ -278,7 +278,7 @@ const database = {
       }
     },
       validationLevel: 'strict',
-      validationAction: 'error'
+      validationAction: 'warn'
     })
   },
 
