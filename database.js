@@ -169,33 +169,18 @@ const database = {
     db.createCollection('books', {validator: {
       $jsonSchema: {
         bsonType: 'object',
-        required: [
-          'title',
-          'year',
-          'description',
-          'authors',
-          'collections',
-          'illustrators',
-          'hashname',
-          'userId',
-          'encoding',
-          'mimetype',
-          'size',
-          'pagesNumber',
-          'content'
-        ],
         properties: {
           title: {
             bsonType: 'string',
-            description: ''
+            description: '1'
           },
           year: {
-            bsonType: 'int',
-            description: ''
+            bsonType: 'string',
+            description: '2'
           },
           description: {
             bsonType: 'string',
-            description: ''
+            description: '3'
           },
           authors: {
             bsonType: 'array',
@@ -204,15 +189,14 @@ const database = {
               properties: {
                 id: {
                   bsonType: 'string',
-                  description: ''
+                  description: '4'
                 },
                 name: {
                   bsonType: 'string',
-                  description: ''
+                  description: '5'
                 }
               }
-            },
-            required: ['id', 'name']
+            }
           },
           collections: {
             bsonType: 'array',
@@ -221,15 +205,14 @@ const database = {
               properties: {
                 id: {
                   bsonType: 'string',
-                  description: ''
+                  description: '6'
                 },
                 name: {
                   bsonType: 'string',
-                  description: ''
+                  description: '7'
                 }
               }
-            },
-            required: ['id', 'name']
+            }
           },
           illustrators: {
             bsonType: 'array',
@@ -238,39 +221,38 @@ const database = {
               properties: {
                 id: {
                   bsonType: 'string',
-                  description: ''
+                  description: '8'
                 },
                 name: {
                   bsonType: 'string',
-                  description: ''
+                  description: '9'
                 }
               }
-            },
-            required: ['id', 'name']
+            }
           },
           hashname: {
             bsonType: 'string',
-            description: ''
+            description: '10'
           },
           userId: {
             bsonType: 'string',
-            description: ''
+            description: '11'
           },
           encoding: {
             bsonType: 'string',
-            description: ''
+            description: '12'
           },
           mimetype: {
             bsonType: 'string',
-            description: ''
+            description: '13'
           },
           size: {
             bsonType: 'int',
-            description: ''
+            description: '14'
           },
           pagesNumber: {
             bsonType: 'int',
-            description: ''
+            description: '15'
           },
           content: {
             bsonType: 'array',
@@ -278,26 +260,25 @@ const database = {
               bsonType: 'object',
               properties: {
                 id: {
-                  bsonType: 'string',
-                  description: ''
+                  bsonType: 'int',
+                  description: '16'
                 },
                 name: {
                   bsonType: 'string',
-                  description: ''
+                  description: '17'
                 },
                 fileId: {
-                  bsonType: 'string',
-                  description: ''
+                  bsonType: 'objectId',
+                  description: '18'
                 }
-              },
-              required: ['id', 'name', 'fileId']
+              }
             }
           }
         }
       }
     },
       validationLevel: 'strict',
-      validationAction: 'warn'
+      validationAction: 'error'
     })
   },
 
