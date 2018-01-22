@@ -79,13 +79,25 @@ const database = {
   initUsers () {
     const db = database.get()
 
-    db.createCollection('users', { validator:
-    { $and:
-    [
-      { username: { $type: 'string' } },
-      { email: { $type: 'string' } },
-      { password: { $type: 'string' } }
-    ]
+    db.createCollection('users', {validator: {
+      $jsonSchema: {
+        bsonType: 'object',
+        required: ['username', 'email', 'password'],
+        properties: {
+          username: {
+            bsonType: 'string',
+            description: 'must be a string and is required'
+          },
+          email: {
+            bsonType: 'string',
+            description: 'must be a string with a valid email and is required'
+          },
+          password: {
+            bsonType: 'string',
+            description: 'must be a string and is reqired'
+          }
+        }
+      }
     },
       validationLevel: 'strict',
       validationAction: 'error'
@@ -95,86 +107,236 @@ const database = {
   initBooks () {
     const db = database.get()
 
-    db.createCollection('books', { validator:
-    { $and:
-    [
-      { name: { $type: 'string' } },
-      { author: { $type: 'string' } },
-      { collection: { $type: 'string' } },
-      { illustrator: { $type: 'string' } },
-      { hashname: { $type: 'string' } },
-      { userId: { $type: 'string' } },
-      { encoding: { $type: 'string' } },
-      { mimetype: { $type: 'string' } },
-      { size: { $type: 'int' } },
-      { pagesNumber: { $type: 'int' } },
-      { content: [
-        { id: { $type: 'string' } },
-        { name: { $type: 'string' } },
-        { fileId: { $type: 'string' } }
-      ]
+    db.createCollection('books', {validator: {
+      $jsonSchema: {
+        bsonType: 'object',
+        properties: {
+          title: {
+            bsonType: 'string',
+            description: 'must be a string'
+          },
+          year: {
+            bsonType: 'string',
+            description: 'must be a string'
+          },
+          description: {
+            bsonType: 'string',
+            description: 'must be a string'
+          },
+          authors: {
+            bsonType: 'array',
+            items: {
+              bsonType: 'object',
+              properties: {
+                id: {
+                  bsonType: 'objectId',
+                  description: 'must be a MongoDB ObjectId'
+                },
+                name: {
+                  bsonType: 'string',
+                  description: 'must be a string'
+                }
+              }
+            }
+          },
+          collections: {
+            bsonType: 'array',
+            items: {
+              bsonType: 'object',
+              properties: {
+                id: {
+                  bsonType: 'objectId',
+                  description: 'must be a MongoDB ObjectId'
+                },
+                name: {
+                  bsonType: 'string',
+                  description: 'must be a string'
+                }
+              }
+            }
+          },
+          illustrators: {
+            bsonType: 'array',
+            items: {
+              bsonType: 'object',
+              properties: {
+                id: {
+                  bsonType: 'objectId',
+                  description: 'must be a MongoDB ObjectId'
+                },
+                name: {
+                  bsonType: 'string',
+                  description: 'must be a string'
+                }
+              }
+            }
+          },
+          hashname: {
+            bsonType: 'string',
+            description: 'must be a string'
+          },
+          userId: {
+            bsonType: 'string',
+            description: 'must be a string'
+          },
+          encoding: {
+            bsonType: 'string',
+            description: 'must be a string'
+          },
+          mimetype: {
+            bsonType: 'string',
+            description: 'must be a string'
+          },
+          size: {
+            bsonType: 'int',
+            description: 'must be an integer'
+          },
+          pagesNumber: {
+            bsonType: 'int',
+            description: 'must be an integer'
+          },
+          content: {
+            bsonType: 'array',
+            items: {
+              bsonType: 'object',
+              properties: {
+                id: {
+                  bsonType: 'int',
+                  description: 'must be an integer'
+                },
+                name: {
+                  bsonType: 'string',
+                  description: 'must be a string'
+                },
+                fileId: {
+                  bsonType: 'objectId',
+                  description: 'must be a MongoDB ObjectId'
+                }
+              }
+            }
+          }
+        }
       }
-    ]
     },
       validationLevel: 'strict',
-      validationAction: 'warn'
+      validationAction: 'error'
     })
   },
 
   initAuthors () {
     const db = database.get()
 
-    db.createCollection('authors', { validator:
-      { $and:
-      [
-        { name: { $type: 'string' } },
-        { userId: { $type: 'string' } },
-        { books: [
-          { id: { $type: 'string' } }
-        ]
+    db.createCollection('authors', {validator: {
+      $jsonSchema: {
+        bsonType: 'object',
+        properties: {
+          name: {
+            bsonType: 'string',
+            description: 'must be a string'
+          },
+          description: {
+            bsonType: 'string',
+            description: 'must be a string'
+          },
+          userId: {
+            bsonType: 'string',
+            description: 'must be a string'
+          },
+          books: {
+            bsonType: 'array',
+            items: {
+              bsonType: 'object',
+              properties: {
+                id: {
+                  bsonType: 'objectId',
+                  description: 'must be a MongoDB ObjectId'
+                }
+              }
+            }
+          }
         }
-      ]
-      },
-        validationLevel: 'strict',
-        validationAction: 'warn'
+      }
+    },
+      validationLevel: 'strict',
+      validationAction: 'error'
     })
   },
 
   initCollections () {
     const db = database.get()
 
-    db.createCollection('collections', { validator:
-      { $and:
-      [
-        { name: { $type: 'string' } },
-        { userId: { $type: 'string' } },
-        { books: [
-          { id: { $type: 'string' } }
-        ]
+    db.createCollection('collections', {validator: {
+      $jsonSchema: {
+        bsonType: 'object',
+        properties: {
+          name: {
+            bsonType: 'string',
+            description: 'must be a string'
+          },
+          description: {
+            bsonType: 'string',
+            description: 'must be a string'
+          },
+          userId: {
+            bsonType: 'string',
+            description: 'must be a string'
+          },
+          books: {
+            bsonType: 'array',
+            items: {
+              bsonType: 'object',
+              properties: {
+                id: {
+                  bsonType: 'objectId',
+                  description: 'must be a MongoDB ObjectId'
+                }
+              }
+            }
+          }
         }
-      ]
-      },
-        validationLevel: 'strict',
-        validationAction: 'warn'
+      }
+    },
+      validationLevel: 'strict',
+      validationAction: 'error'
     })
   },
 
   initIllustrators () {
     const db = database.get()
 
-    db.createCollection('illustrators', { validator:
-      { $and:
-      [
-        { name: { $type: 'string' } },
-        { userId: { $type: 'string' } },
-        { books: [
-          { id: { $type: 'string' } }
-        ]
+    db.createCollection('illustrators', {validator: {
+      $jsonSchema: {
+        bsonType: 'object',
+        properties: {
+          name: {
+            bsonType: 'string',
+            description: 'must be a string'
+          },
+          description: {
+            bsonType: 'string',
+            description: 'must be a string'
+          },
+          userId: {
+            bsonType: 'string',
+            description: 'must be a string'
+          },
+          books: {
+            bsonType: 'array',
+            items: {
+              bsonType: 'object',
+              properties: {
+                id: {
+                  bsonType: 'objectId',
+                  description: 'must be a MongoDB ObjectId'
+                }
+              }
+            }
+          }
         }
-      ]
-      },
-        validationLevel: 'strict',
-        validationAction: 'warn'
+      }
+    },
+      validationLevel: 'strict',
+      validationAction: 'error'
     })
   },
 
