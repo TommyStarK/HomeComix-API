@@ -152,12 +152,24 @@ const books = {
       switch (item) {
         case 'title':
           body.title = request.body[item]
+          if (Array.isArray(request.body[item])) {
+            body['notValid'] = item
+            return body
+          }
           break
         case 'year':
           body.year = request.body[item]
+          if (Array.isArray(request.body[item])) {
+            body['notValid'] = item
+            return body
+          }
           break
         case 'description':
           body.description = request.body[item]
+          if (Array.isArray(request.body[item])) {
+            body['notValid'] = item
+            return body
+          }
           break
         default:
           if (Array.isArray(request.body[item])) {
@@ -241,7 +253,13 @@ const books = {
       return response.status(412).json({
         status: 412,
         success: false,
-        message: `Body: field ${body['notSupported']} not supported`
+        message: `Body: field '${body['notSupported']}' not supported`
+      })
+    } else if (body['notValid'] !== undefined) {
+      return response.status(412).json({
+        status: 412,
+        success: false,
+        message: `Body: Array not supported for '${body['notValid']}'`
       })
     }
 
@@ -262,7 +280,7 @@ const books = {
         return response.status(409).json({
           status: 409,
           success: false,
-          message: `Conflict: ${request.file.originalname.slice(0, -4)} already exists`
+          message: `Conflict: Book '${request.file.originalname.slice(0, -4)}' already exists`
         })
       }
 
@@ -340,7 +358,13 @@ const books = {
       return response.status(412).json({
         status: 412,
         success: false,
-        message: `Body: field ${body['notSupported']} not supported`
+        message: `Body: field '${body['notSupported']}' not supported`
+      })
+    } else if (body['notValid'] !== undefined) {
+      return response.status(412).json({
+        status: 412,
+        success: false,
+        message: `Body: Array not supported for '${body['notValid']}'`
       })
     }
 

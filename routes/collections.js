@@ -1,3 +1,4 @@
+const utils = require('../utils.js')
 const database = require('../database.js')
 
 const collections = {
@@ -67,35 +68,79 @@ const collections = {
 
   async create (request, response, next) {
     const db = database.get()
+    const ObjectId = require('mongodb').ObjectId
 
-    if (typeof request.body.name === 'undefined') {
+    let body = utils.bodyHandler(request)
+
+    if (body['notSupported'] !== undefined) {
       return response.status(412).json({
         status: 412,
         success: false,
-        message: 'Body missing name field'
+        message: `Body: field '${body['notSupported']}' not supported`
+      })
+    } else if (body['notValid'] !== undefined) {
+      return response.status(412).json({
+        status: 412,
+        success: false,
+        message: `Body: Array not supported for '${body['notValid']}'`
+      })
+    }
+
+    if (!body.name.length) {
+      return response.status(412).json({
+        status: 412,
+        success: false,
+        message: 'A name is mandatory to create a new collection'
       })
     }
 
     try {
-      const doc = await db.collection('collections').findOne(
+      const collection = await db.collection('collections').findOne(
         {
-          name: request.body.name,
+          name: body.name,
           userId: request.decoded.userId
         })
 
-      if (doc) {
+      if (collection) {
         return response.status(409).json({
           status: 409,
           success: false,
-          message: `Conflict: ${request.body.name} already exists`
+          message: `Conflict: Collection '${body.name}' already exists`
         })
       }
 
-      await db.collection('collections').insertOne({
-        name: request.body.name,
+      body = await utils.retrieveBookID(body, request.decoded.userId)
+
+      if (body['notFound'] !== undefined) {
+        return response.status(409).json({
+          status: 409,
+          success: false,
+          message: `No book named '${body['notFound']}' found`
+        })
+      }
+
+      const newCollection = await db.collection('collections').insertOne({
+        name: body.name,
+        description: body.description,
         userId: request.decoded.userId,
-        books: []
+        books: body.books
       })
+
+      for (let item in body.books) {
+        await db.collection('books').updateOne(
+          {
+            _id: ObjectId(body.books[item].id),
+            userId: request.decoded.userId
+          },
+          {
+            $addToSet: {
+              collections: {
+                id: newCollection.insertedId,
+                name: body.name
+              }
+            }
+          })
+      }
 
       return response.status(201).json({
         status: 201,
@@ -154,7 +199,7 @@ const collections = {
           userId: request.decoded.userId
         },
         {
-          $set:{
+          $set: {
             collection: collection.name
           }
         })
@@ -183,13 +228,13 @@ const collections = {
           name: 1
         })
 
-        if (!target) {
-          return response.status(404).json({
-            status: 404,
-            success: false,
-            message: 'Collection not found'
-          })
-        }
+      if (!target) {
+        return response.status(404).json({
+          status: 404,
+          success: false,
+          message: 'Collection not found'
+        })
+      }
 
       const doc = await db.collection('collections').findOneAndDelete(
         {

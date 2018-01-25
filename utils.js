@@ -135,5 +135,75 @@ module.exports = {
     } catch (err) {
       return err
     }
+  },
+
+  bodyHandler(request) {
+    let body = {
+      name: '',
+      description: '',
+      books: []
+    }
+
+    for (let item in request.body) {
+      if (!['name', 'description', 'books'].includes(item)) {
+        body['notSupported'] = item
+        return body
+      }
+
+      switch (item) {
+        case 'name':
+          if (Array.isArray(request.body[item])) {
+            body['notValid'] = item
+            return body
+          }
+          body.name = request.body[item]
+          break
+        case 'description':
+          if (Array.isArray(request.body[item])) {
+            body['notValid'] = item
+            return body
+          }
+          body.description = request.body[item]
+          break
+        default:
+          if (Array.isArray(request.body[item])) {
+            for (let index in request.body[item]) {
+              body.books.push({
+                id: '',
+                title: request.body[item][index]
+              })
+            }
+          } else {
+            body.books.push({
+              id: '',
+              title: request.body[item]
+            })
+          }
+          break
+      }
+    }
+
+    return body
+  },
+
+  async retrieveBookID(body, userId) {
+    const db = require('./database.js').get()
+
+    for (let item in body.books) {
+      const book = await db.collection('books').findOne(
+        {
+          title: body.books[item].title,
+          userId: userId
+        })
+
+      if (book) {
+        body.books[item].id = book._id
+        delete body.books[item].title
+      } else {
+        body['notFound'] = body.books[item].title
+        return body
+      }
+    }
+    return body
   }
 }
