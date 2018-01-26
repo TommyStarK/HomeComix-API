@@ -247,12 +247,22 @@ const illustrators = {
       if (doc && doc.value !== null) {
         await db.collection('books').update(
           {
-            illustrator: target.name,
+            illustrators: {
+                $in: [
+                    {
+                        id: ObjectId(request.params.id),
+                        name: target.name
+                    }
+                ]
+            },
             userId: request.decoded.userId
           },
           {
-            $set: {
-              illustrator: ''
+            $pull: {
+              illustrators: {
+                   id: ObjectId(request.params.id),
+                   name: target.name
+               }
             }
           },
           {
@@ -269,7 +279,7 @@ const illustrators = {
       return response.status(500).json({
         status: 500,
         success: false,
-        message: 'An unexpected error occured during the deletion of the illustrator'
+        message: 'An unexpected error occured during the deletion of the author'
       })
     } catch (err) {
       next(err)

@@ -245,12 +245,22 @@ const collections = {
       if (doc && doc.value !== null) {
         await db.collection('books').update(
           {
-            collection: target.name,
+            collections: {
+                $in: [
+                    {
+                        id: ObjectId(request.params.id),
+                        name: target.name
+                    }
+                ]
+            },
             userId: request.decoded.userId
           },
           {
-            $set: {
-              collection: ''
+            $pull: {
+              collections: {
+                   id: ObjectId(request.params.id),
+                   name: target.name
+               }
             }
           },
           {
@@ -267,7 +277,7 @@ const collections = {
       return response.status(500).json({
         status: 500,
         success: false,
-        message: 'An unexpected error occured during the deletion of the collection'
+        message: 'An unexpected error occured during the deletion of the author'
       })
     } catch (err) {
       next(err)

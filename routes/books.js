@@ -149,44 +149,64 @@ const books = {
         return body
       }
 
-      switch (item) {
-        case 'title':
-          body.title = request.body[item]
+      // switch (item) {
+      //   case 'title':
+      //     body.title = request.body[item]
+      //     if (Array.isArray(request.body[item])) {
+      //       body['notValid'] = item
+      //       return body
+      //     }
+      //     break
+      //   case 'year':
+      //     body.year = request.body[item]
+      //     if (Array.isArray(request.body[item])) {
+      //       body['notValid'] = item
+      //       return body
+      //     }
+      //     break
+      //   case 'description':
+      //     body.description = request.body[item]
+      //     if (Array.isArray(request.body[item])) {
+      //       body['notValid'] = item
+      //       return body
+      //     }
+      //     break
+      //   default:
+      //     if (Array.isArray(request.body[item])) {
+      //       for (let index in request.body[item]) {
+      //         body[item].push({
+      //           id: '',
+      //           name: request.body[item][index]
+      //         })
+      //       }
+      //     } else {
+      //       body[item].push({
+      //         id: '',
+      //         name: request.body[item]
+      //       })
+      //     }
+      //     break
+      // }
+
+      if (['title', 'year', 'description'].includes(item)) {
           if (Array.isArray(request.body[item])) {
-            body['notValid'] = item
-            return body
-          }
-          break
-        case 'year':
-          body.year = request.body[item]
-          if (Array.isArray(request.body[item])) {
-            body['notValid'] = item
-            return body
-          }
-          break
-        case 'description':
-          body.description = request.body[item]
-          if (Array.isArray(request.body[item])) {
-            body['notValid'] = item
-            return body
-          }
-          break
-        default:
-          if (Array.isArray(request.body[item])) {
-            for (let index in request.body[item]) {
-              body[item].push({
-                id: '',
-                name: request.body[item][index]
-              })
+              body['notValid'] = item
+              return body
             }
-          } else {
-            body[item].push({
+           body[item] = request.body[item]
+       } else if (Array.isArray(request.body[item])) {
+         for (let index in request.body[item]) {
+           body[item].push({
+             id: '',
+             name: request.body[item][index]
+           })
+         }
+       } else {
+           body[item].push({
               id: '',
               name: request.body[item]
-            })
-          }
-          break
-      }
+          })
+       }
     }
 
     return body
@@ -233,6 +253,11 @@ const books = {
           }
         })
     }
+  },
+
+  async thumbnail(request, response, next) {
+    request.params.pid = 0
+    await books.getPage(request, response, next)
   },
 
   async create (request, response, next) {

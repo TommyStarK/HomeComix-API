@@ -245,12 +245,22 @@ const authors = {
       if (doc && doc.value !== null) {
         await db.collection('books').update(
           {
-            author: target.name,
+            authors: {
+                $in: [
+                    {
+                        id: ObjectId(request.params.id),
+                        name: target.name
+                    }
+                ]
+            },
             userId: request.decoded.userId
           },
           {
-            $set: {
-              author: ''
+            $pull: {
+              authors: {
+                  id: ObjectId(request.params.id),
+                  name: target.name
+              }
             }
           },
           {
