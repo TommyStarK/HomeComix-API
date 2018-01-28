@@ -362,6 +362,11 @@ const books = {
         {
           _id: ObjectId(request.params.id),
           userId: request.decoded.userId
+        },
+        {
+          title: 1,
+          year: 1,
+          description: 1
         })
 
       if (!book) {
@@ -381,10 +386,6 @@ const books = {
             body
           )
         }
-
-        if ((body[elem] === '') || (Array.isArray(body[elem]) && !body[elem].length)) {
-          delete body[elem]
-        }
       }
 
       await db.collection('books').updateOne(
@@ -393,7 +394,22 @@ const books = {
           userId: request.decoded.userId
         },
         {
-          $set: body
+          $set: {
+            title: body.title == '' ? book.title : body.title,
+            year: body.year == '' ? book.year : body.year,
+            description: body.description == '' ? book.description : body.description
+          },
+          $addToSet: {
+            authors: {
+              $each: body.authors
+            },
+            collections: {
+              $each: body.collections
+            },
+            illustrators: {
+              $each: body.illustrators
+            }
+          }
         })
 
       for (let elem in body) {
@@ -455,7 +471,6 @@ const books = {
             await db.collection(elem).updateOne(
               {
                 _id: ObjectId(collections[elem][item].id),
-                name: collections[elem][item].name,
                 userId: request.decoded.userId
               },
               {

@@ -156,24 +156,31 @@ const illustrators = {
     const db = database.get()
     const ObjectId = require('mongodb').ObjectId
 
-    console.log('DEBUG')
+    let body = utils.bodyHandler(request)
+
+    if (body['notSupported'] !== undefined) {
+      return response.status(412).json({
+        status: 412,
+        success: false,
+        message: `Body: field '${body['notSupported']}' not supported`
+      })
+    } else if (body['notValid'] !== undefined) {
+      return response.status(412).json({
+        status: 412,
+        success: false,
+        message: `Body: Array not supported for '${body['notValid']}'`
+      })
+    }
 
     try {
-      if (request.body.id === undefined) {
-        return response.status(412).json({
-          status: 412,
-          success: false,
-          message: 'Body missing id field'
-        })
-      }
-
       const illustrator = await db.collection('illustrators').findOne(
         {
           _id: ObjectId(request.params.id),
           userId: request.decoded.userId
         },
         {
-          name: 1
+          name: 1,
+          description: 1
         })
 
       if (!illustrator) {
@@ -184,27 +191,53 @@ const illustrators = {
         })
       }
 
-      await db.collection('illustrator').update(
+      body = await utils.retrieveBookID(body, request.decoded.userId)
+
+      if (body['notFound'] !== undefined) {
+        return response.status(409).json({
+          status: 409,
+          success: false,
+          message: `No book named '${body['notFound']}' found`
+        })
+      }
+
+      for (let item in body.books) {
+        delete body.books[item].title
+        body.books[item].id = ObjectId(body.books[item].id)
+      }
+
+      await db.collection('illustrators').updateOne(
         {
           _id: ObjectId(request.params.id),
           userId: request.decoded.userId
         },
         {
-          $push: {
-            books: {id: request.body.id}
+          $set: {
+            name: body.name == '' ? illustrator.name : body.name,
+            description: body.description == '' ? illustrator.description : body.description
+          },
+          $addToSet: {
+            books: {
+              $each: body.books
+            }
           }
         })
 
-      await db.collection('books').update(
-        {
-          _id: ObjectId(request.body.id),
-          userId: request.decoded.userId
-        },
-        {
-          $set: {
-            illustrator: illustrator.name
-          }
-        })
+      for (let item in body.books) {
+        await db.collection('books').updateOne(
+          {
+            _id: body.books[item].id,
+            userId: request.decoded.userId
+          },
+          {
+            $addToSet: {
+              illustrators: {
+                id: illustrator._id,
+                name: body.name == '' ? illustrator.name : body.name
+              }
+            }
+          })
+      }
 
       return response.status(200).json({
         status: 200,
@@ -279,7 +312,7 @@ const illustrators = {
       return response.status(500).json({
         status: 500,
         success: false,
-        message: 'An unexpected error occured during the deletion of the author'
+        message: 'An unexpected error occured during the deletion of the illustrator'
       })
     } catch (err) {
       next(err)

@@ -156,22 +156,31 @@ const authors = {
     const db = database.get()
     const ObjectId = require('mongodb').ObjectId
 
-    try {
-      if (request.body.id === undefined) {
-        return response.status(412).json({
-          status: 412,
-          success: false,
-          message: 'Body missing id field'
-        })
-      }
+    let body = utils.bodyHandler(request)
 
+    if (body['notSupported'] !== undefined) {
+      return response.status(412).json({
+        status: 412,
+        success: false,
+        message: `Body: field '${body['notSupported']}' not supported`
+      })
+    } else if (body['notValid'] !== undefined) {
+      return response.status(412).json({
+        status: 412,
+        success: false,
+        message: `Body: Array not supported for '${body['notValid']}'`
+      })
+    }
+
+    try {
       const author = await db.collection('authors').findOne(
         {
           _id: ObjectId(request.params.id),
           userId: request.decoded.userId
         },
         {
-          name: 1
+          name: 1,
+          description: 1
         })
 
       if (!author) {
@@ -182,27 +191,53 @@ const authors = {
         })
       }
 
-      await db.collection('authors').update(
+      body = await utils.retrieveBookID(body, request.decoded.userId)
+
+      if (body['notFound'] !== undefined) {
+        return response.status(409).json({
+          status: 409,
+          success: false,
+          message: `No book named '${body['notFound']}' found`
+        })
+      }
+
+      for (let item in body.books) {
+        delete body.books[item].title
+        body.books[item].id = ObjectId(body.books[item].id)
+      }
+
+      await db.collection('authors').updateOne(
         {
           _id: ObjectId(request.params.id),
           userId: request.decoded.userId
         },
         {
-          $push: {
-            books: {id: request.body.id}
+          $set: {
+            name: body.name == '' ? author.name : body.name,
+            description: body.description == '' ? author.description : body.description
+          },
+          $addToSet: {
+            books: {
+              $each: body.books
+            }
           }
         })
 
-      await db.collection('books').update(
-        {
-          _id: ObjectId(request.body.id),
-          userId: request.decoded.userId
-        },
-        {
-          $set: {
-            author: author.name
-          }
-        })
+      for (let item in body.books) {
+        await db.collection('books').updateOne(
+          {
+            _id: body.books[item].id,
+            userId: request.decoded.userId
+          },
+          {
+            $addToSet: {
+              authors: {
+                id: author._id,
+                name: body.name == '' ? author.name : body.name
+              }
+            }
+          })
+      }
 
       return response.status(200).json({
         status: 200,
