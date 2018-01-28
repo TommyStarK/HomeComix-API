@@ -280,22 +280,16 @@ const collections = {
       if (doc && doc.value !== null) {
         await db.collection('books').update(
           {
-            collections: {
-                $in: [
-                    {
-                        id: ObjectId(request.params.id),
-                        name: target.name
-                    }
-                ]
+            'collections.id': {
+              $eq: ObjectId(request.params.id)
             },
             userId: request.decoded.userId
           },
           {
             $pull: {
               collections: {
-                   id: ObjectId(request.params.id),
-                   name: target.name
-               }
+                id: ObjectId(request.params.id)
+              }
             }
           },
           {

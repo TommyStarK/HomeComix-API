@@ -280,22 +280,16 @@ const illustrators = {
       if (doc && doc.value !== null) {
         await db.collection('books').update(
           {
-            illustrators: {
-                $in: [
-                    {
-                        id: ObjectId(request.params.id),
-                        name: target.name
-                    }
-                ]
+            'illustrators.id': {
+              $eq: ObjectId(request.params.id)
             },
             userId: request.decoded.userId
           },
           {
             $pull: {
               illustrators: {
-                   id: ObjectId(request.params.id),
-                   name: target.name
-               }
+                id: ObjectId(request.params.id)
+              }
             }
           },
           {
