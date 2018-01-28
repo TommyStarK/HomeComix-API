@@ -150,37 +150,25 @@ module.exports = {
         return body
       }
 
-      switch (item) {
-        case 'name':
+      if (['name', 'description'].includes(item)) {
           if (Array.isArray(request.body[item])) {
-            body['notValid'] = item
-            return body
-          }
-          body.name = request.body[item]
-          break
-        case 'description':
-          if (Array.isArray(request.body[item])) {
-            body['notValid'] = item
-            return body
-          }
-          body.description = request.body[item]
-          break
-        default:
-          if (Array.isArray(request.body[item])) {
-            for (let index in request.body[item]) {
-              body.books.push({
-                id: '',
-                title: request.body[item][index]
-              })
+              body['notValid'] = item
+              return body
             }
-          } else {
-            body.books.push({
+           body[item] = request.body[item]
+       } else if (Array.isArray(request.body[item])) {
+         for (let index in request.body[item]) {
+           body[item].push({
+             id: '',
+             title: request.body[item][index]
+           })
+         }
+       } else {
+           body[item].push({
               id: '',
               title: request.body[item]
-            })
-          }
-          break
-      }
+          })
+       }
     }
 
     return body

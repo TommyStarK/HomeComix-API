@@ -96,7 +96,7 @@ const books = {
           userId: request.decoded.userId
         })
 
-      if (!book || (parseInt(request.params.pid) > (book.pagesNumber - 1))) {
+      if (!book || (parseInt(request.params.pid) > book.pagesNumber)) {
         return response.status(404).json({
           status: 404,
           success: false,
@@ -105,7 +105,7 @@ const books = {
       }
 
       await mkdirp(tmp)
-      const file = book.content[request.params.pid]
+      const file = book.content.find(f => { return f.id == request.params.pid })
       await bucket.find({ _id: ObjectId(file.fileId) })
       await utils.writeFileAsync(path.join(tmp, file.name), '')
       await bucket.openDownloadStreamByName(file.name)
@@ -148,45 +148,6 @@ const books = {
         body['notSupported'] = item
         return body
       }
-
-      // switch (item) {
-      //   case 'title':
-      //     body.title = request.body[item]
-      //     if (Array.isArray(request.body[item])) {
-      //       body['notValid'] = item
-      //       return body
-      //     }
-      //     break
-      //   case 'year':
-      //     body.year = request.body[item]
-      //     if (Array.isArray(request.body[item])) {
-      //       body['notValid'] = item
-      //       return body
-      //     }
-      //     break
-      //   case 'description':
-      //     body.description = request.body[item]
-      //     if (Array.isArray(request.body[item])) {
-      //       body['notValid'] = item
-      //       return body
-      //     }
-      //     break
-      //   default:
-      //     if (Array.isArray(request.body[item])) {
-      //       for (let index in request.body[item]) {
-      //         body[item].push({
-      //           id: '',
-      //           name: request.body[item][index]
-      //         })
-      //       }
-      //     } else {
-      //       body[item].push({
-      //         id: '',
-      //         name: request.body[item]
-      //       })
-      //     }
-      //     break
-      // }
 
       if (['title', 'year', 'description'].includes(item)) {
           if (Array.isArray(request.body[item])) {
@@ -256,7 +217,7 @@ const books = {
   },
 
   async thumbnail(request, response, next) {
-    request.params.pid = 0
+    request.params.pid = 1
     await books.getPage(request, response, next)
   },
 
@@ -314,10 +275,13 @@ const books = {
       await handler(request.file.path, tmp)
       const items = await utils.readdirAsync(tmp)
       for (let item of items) {
+        if (item == '.DS_Store') {
+          continue
+        }
         const data = await fs.createReadStream(path.join(tmp, item))
           .pipe(bucket.openUploadStream(item))
         pages.push({
-          id: index++,
+          id: ++index,
           name: data.filename,
           fileId: data.id
         })
