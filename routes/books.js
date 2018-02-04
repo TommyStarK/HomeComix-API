@@ -485,10 +485,17 @@ const books = {
         }
 
         for (let index in book.content) {
-          await db.collection('fs.files').findOneAndDelete(
+          const doc = await db.collection('fs.files').findOneAndDelete(
             {
               _id: ObjectId(book.content[index].fileId)
             })
+
+          if (doc && doc.value) {
+            await db.collection('fs.chunks').deleteMany(
+              {
+                files_id: doc.value._id
+              })
+          }
         }
 
         return response.status(200).json({
