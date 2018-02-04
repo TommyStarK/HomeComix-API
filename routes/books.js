@@ -16,8 +16,7 @@ const books = {
       const books = await db.collection('books').find(
         {
           userId: request.decoded.userId
-        },
-        {
+        }).project({
           title: 1,
           year: 1,
           description: 1,
@@ -55,7 +54,7 @@ const books = {
         {
           _id: ObjectId(request.params.id),
           userId: request.decoded.userId
-        }, {
+        }).project({
           title: 1,
           year: 1,
           description: 1,
@@ -487,10 +486,6 @@ const books = {
 
         for (let index in book.content) {
           await db.collection('fs.files').findOneAndDelete(
-            {
-              _id: ObjectId(book.content[index].fileId)
-            })
-          await db.collection('fs.chunks').deleteMany(
             {
               _id: ObjectId(book.content[index].fileId)
             })

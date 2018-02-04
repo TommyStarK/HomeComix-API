@@ -9,7 +9,7 @@ const collections = {
     try {
       const collections = await db.collection('collections').find({
         userId: request.decoded.userId
-      }, {
+      }).project({
         name: 1,
         description: 1,
         books: 1
@@ -42,7 +42,7 @@ const collections = {
         {
           _id: ObjectId(request.params.id),
           userId: request.decoded.userId
-        }, {
+        }).project({
           name: 1,
           description: 1,
           books: 1

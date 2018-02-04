@@ -9,7 +9,7 @@ const authors = {
     try {
       const authors = await db.collection('authors').find({
         userId: request.decoded.userId
-      }, {
+      }).project({
         name: 1,
         description: 1,
         books: 1
@@ -42,7 +42,7 @@ const authors = {
         {
           _id: ObjectId(request.params.id),
           userId: request.decoded.userId
-        }, {
+        }).project({
           name: 1,
           description: 1,
           books: 1
@@ -222,7 +222,7 @@ const authors = {
             }
           }
         })
-        
+
       await db.collection('books').update(
         {
           'authors.id': {
