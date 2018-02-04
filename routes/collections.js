@@ -223,6 +223,29 @@ const collections = {
           }
         })
 
+      await db.collection('books').update(
+        {
+          'collections.id': {
+            $eq: ObjectId(request.params.id)
+          },
+          userId: request.decoded.userId
+        },
+        {
+          $set: {
+            'collections.$[element].name' : body.name == '' ? collection.name : body.name
+          }
+        },
+        {
+          multi: true,
+          arrayFilters: [
+            {
+              'element.id': {
+                $eq: ObjectId(request.params.id)
+              }
+            }
+          ]
+        })
+
       for (let item in body.books) {
         await db.collection('books').updateOne(
           {

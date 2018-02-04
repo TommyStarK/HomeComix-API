@@ -223,6 +223,29 @@ const illustrators = {
           }
         })
 
+      await db.collection('books').update(
+        {
+          'illustrators.id': {
+            $eq: ObjectId(request.params.id)
+          },
+          userId: request.decoded.userId
+        },
+        {
+          $set: {
+            'illustrators.$[element].name' : body.name == '' ? illustrator.name : body.name
+          }
+        },
+        {
+          multi: true,
+          arrayFilters: [
+            {
+              'element.id': {
+                $eq: ObjectId(request.params.id)
+              }
+            }
+          ]
+        })
+
       for (let item in body.books) {
         await db.collection('books').updateOne(
           {
