@@ -435,6 +435,7 @@ const books = {
 
   async delete (request, response, next) {
     const db = database.get()
+    const bucket = database.bucket()
     const ObjectId = require('mongodb').ObjectId
 
     try {
@@ -446,7 +447,8 @@ const books = {
         {
           authors: 1,
           collections: 1,
-          illustrators: 1
+          illustrators: 1,
+          content: 1
         })
 
       if (!book) {
@@ -481,6 +483,17 @@ const books = {
                 }
               })
           }
+        }
+
+        for (let index in book.content) {
+          await db.collection('fs.files').findOneAndDelete(
+            {
+              _id: ObjectId(book.content[index].fileId)
+            })
+          await db.collection('fs.chunks').deleteMany(
+            {
+              _id: ObjectId(book.content[index].fileId)
+            })
         }
 
         return response.status(200).json({
