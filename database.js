@@ -6,36 +6,27 @@ let _db
 let _bucket
 
 const database = {
-  connect () {
-    return new Promise((resolve, reject) => {
-      let url = 'mongodb://'
+  async connect () {
+    let url = 'mongodb://'
 
-      if (config.mongo.auth) {
-        url += config.mongo.username +
-          ':' + config.mongo.username +
-          '@' + config.mongo.uri +
-          ':' + config.mongo.port +
-          '/' + config.mongo.database
-      } else {
-        url += config.mongo.uri +
+    if (config.mongo.auth) {
+      url += config.mongo.username +
+        ':' + config.mongo.username +
+        '@' + config.mongo.uri +
         ':' + config.mongo.port +
         '/' + config.mongo.database
-      }
+    } else {
+      url += config.mongo.uri +
+      ':' + config.mongo.port +
+      '/' + config.mongo.database
+    }
 
-      MongoClient.connect(url, (err, db) => {
-        if (err) {
-          reject(err)
-        } else {
-          try {
-            _db = db
-            _bucket = new mongodb.GridFSBucket(db)
-            resolve(db)
-          } catch (err) {
-            reject(err)
-          }
-        }
-      })
-    })
+    try {
+      _db = await MongoClient.connect(url)
+      _bucket = new mongodb.GridFSBucket(_db)
+    } catch (err) {
+      console.log(err)
+    }
   },
 
   init () {

@@ -8,6 +8,8 @@ The service which powers the HomeComix iOS app
 - [Unrar](https://www.rarlab.com/rar_add.htm)
 - [Unzip](http://www.7-zip.org/)
 
+By convenience the directory holding the database is located at `$HOME/.homecomix`
+
 ### Usage
 
 - Assuming you already have Mongo running:
