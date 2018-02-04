@@ -21,12 +21,9 @@ const database = {
       '/' + config.mongo.database
     }
 
-    try {
-      _db = await MongoClient.connect(url)
-      _bucket = new mongodb.GridFSBucket(_db)
-    } catch (err) {
-      console.log(err)
-    }
+    const client = await MongoClient.connect(url)
+    _db = client.db('homecomix-db')
+    _bucket = new mongodb.GridFSBucket(_db)
   },
 
   init () {

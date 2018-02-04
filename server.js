@@ -31,8 +31,6 @@ app.all('/api.homecomix/*', [require('./middleware/token')])
 // Mounts the router as middleware at path "/"
 app.use('/', router)
 
-// let db = database.get()
-// console.log(db.version())
 database.connect()
   .then(() => {
     console.log(`${homecomixApi}Connection to the database [${success}]`)
