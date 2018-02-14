@@ -42,11 +42,6 @@ const authors = {
         {
           _id: ObjectId(request.params.id),
           userId: request.decoded.userId
-        }, 
-        {
-          name: 1,
-          description: 1,
-          books: 1
         })
 
       if (!author) {
