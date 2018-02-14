@@ -42,10 +42,6 @@ const illustrators = {
         {
           _id: ObjectId(request.params.id),
           userId: request.decoded.userId
-        }).project({
-          name: 1,
-          description: 1,
-          books: 1
         })
 
       if (!illustrator) {
@@ -55,6 +51,8 @@ const illustrators = {
           message: 'Illustrator not found'
         })
       }
+
+      delete illustrator.userId
 
       return response.status(200).json({
         status: 200,

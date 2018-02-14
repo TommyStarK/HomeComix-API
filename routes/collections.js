@@ -42,10 +42,6 @@ const collections = {
         {
           _id: ObjectId(request.params.id),
           userId: request.decoded.userId
-        }).project({
-          name: 1,
-          description: 1,
-          books: 1
         })
 
       if (!collection) {
@@ -55,6 +51,8 @@ const collections = {
           message: 'Collection not found'
         })
       }
+
+      delete collection.userId
 
       return response.status(200).json({
         status: 200,

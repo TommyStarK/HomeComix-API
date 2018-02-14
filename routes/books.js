@@ -54,15 +54,6 @@ const books = {
         {
           _id: ObjectId(request.params.id),
           userId: request.decoded.userId
-        }).project({
-          title: 1,
-          year: 1,
-          description: 1,
-          authors: 1,
-          collections: 1,
-          illustrators: 1,
-          size: 1,
-          pagesNumber: 1
         })
 
       if (!book) {
@@ -72,6 +63,12 @@ const books = {
           message: 'Book not found'
         })
       }
+
+      delete book.hashname
+      delete book.userId
+      delete book.mimetype
+      delete book.encoding
+      delete book.content
 
       return response.status(200).json({
         status: 200,

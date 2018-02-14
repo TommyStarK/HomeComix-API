@@ -42,7 +42,8 @@ const authors = {
         {
           _id: ObjectId(request.params.id),
           userId: request.decoded.userId
-        }).project({
+        }, 
+        {
           name: 1,
           description: 1,
           books: 1
@@ -55,6 +56,8 @@ const authors = {
           message: 'Author not found'
         })
       }
+
+      delete author.userId
 
       return response.status(200).json({
         status: 200,

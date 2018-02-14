@@ -12,6 +12,7 @@ const error = {
   // Middleware to catch unexpected errors
   errorHandler (err, request, response, next) {
     require('../database.js').close()
+    console.log('#### ERROR ####')
     console.log(err.message)
     response.status(500).json({
       status: 500,
