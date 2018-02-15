@@ -334,10 +334,6 @@ const database = {
 
   bucket () {
     return _bucket
-  },
-
-  close () {
-    _db.close()
   }
 }
 
