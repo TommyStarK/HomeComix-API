@@ -16,6 +16,7 @@
     "async-mkdirp": "^1.2.0",
     "body-parser": "^1.18.2",
     "comic-info": "^0.0.4",
+    "cors": "^2.8.4",
     "cross-unzip": "^0.2.1",
     "crypto": "^1.0.1",
     "express": "^4.16.1",

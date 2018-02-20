@@ -1,3 +1,4 @@
+const cors = require('cors')
 const express = require('express')
 const bodyParser = require('body-parser')
 const router = require('./routes/router.js')
@@ -13,10 +14,19 @@ const app = express()
 // Port setting
 const port = process.env.PORT || 3000
 
+// Enable all CORS request
+app.use(cors())
 // Allows nested object
 app.use(bodyParser.urlencoded({extended: true}))
 // Parses incoming request bodies in a middleware
 app.use(bodyParser.json())
+// Allow cross domain scripting
+app.use(function(request, response, next) {
+  response.header("Access-Control-Allow-Origin", "*")
+  response.header("Access-Control-Allow-Headers", "Content-Type")
+  response.header("Access-Control-Allow-Headers", "X-Requested-With")
+  next()
+})
 
 // Account management
 app.post('/api.homecomix/register', account.register)
