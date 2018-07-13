@@ -20,13 +20,6 @@ app.use(cors())
 app.use(bodyParser.urlencoded({extended: true}))
 // Parses incoming request bodies in a middleware
 app.use(bodyParser.json())
-// Allow cross domain scripting
-app.use(function(request, response, next) {
-  response.header("Access-Control-Allow-Origin", "*")
-  response.header("Access-Control-Allow-Headers", "Content-Type")
-  response.header("Access-Control-Allow-Headers", "X-Requested-With")
-  next()
-})
 
 // Account management
 app.post('/api.homecomix/register', account.register)
